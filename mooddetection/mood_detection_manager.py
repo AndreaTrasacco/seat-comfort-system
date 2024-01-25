@@ -5,8 +5,8 @@ class MoodDetectionManager:
     def __init__(self):
         self._bad_emotions = ["angry", "disgust"]
 
-    def get_mood(self, img_path):  # It returns 1 if the detected emotion was "bad", 0 otherwise
-        detection = DeepFace.analyze(img_path=img_path, actions=["emotion"])
+    def get_mood(self, img):  # It returns 1 if the detected emotion was "bad", 0 otherwise
+        detection = DeepFace.analyze(img, actions=["emotion"])
         emotion = detection[0]['dominant_emotion']
         if emotion in self._bad_emotions:  # If the user didn't appreciate the change of seat position by system
             return 1
