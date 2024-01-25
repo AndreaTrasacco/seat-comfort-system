@@ -5,7 +5,15 @@ class SeatView():
     def __init__(self, master):
         self.master = master
         self.frame = tk.Frame(master)
+        self.seat = Image.open("img/seat.png")
 
+        self.canvas = tk.Canvas(self.frame, width=300, height=300)
+        self.canvas.pack()
+        self.seat = self.seat.resize((300, 150))
+
+        self.seat_tk = ImageTk.PhotoImage(self.seat)
+
+        self.canvas.create_image(0, 0, anchor=tk.NW, image=self.seat_tk)
 
         self.left_arrow_image = Image.open("img/left_arrow.jpg")
         self.right_arrow_image = Image.open("img/right_arrow.jpg")
