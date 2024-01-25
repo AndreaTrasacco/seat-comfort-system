@@ -1,4 +1,4 @@
-from eyes_detector import EyesDetector
+from eyesdetector.eyes_detector import EyesDetector
 
 class EyesDetectorManager:
     def __init__(self):
