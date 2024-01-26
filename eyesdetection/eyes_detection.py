@@ -1,11 +1,12 @@
 import os
-import dlib
+
 import cv2
+import dlib
 import numpy as np
 from keras.models import model_from_json
 
 
-class EyesDetector:
+class EyesDetection:
     def __init__(self):
         self.json_path = "models/model.json"
         self.weights_path = "models/model.h5"
@@ -275,72 +276,66 @@ class EyesDetector:
             dlib_points[i] = [part.x, part.y]
         return dlib_points
 
-    def image_demo(self, image_path):
-        img = cv2.imread(image_path)
-        if not img is None:
+    def classify_eyes(self, img):
+        gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        faces = self.detector(gray)
+        for i, face in enumerate(faces):
+            face_img = gray[
+                       max(0, face.top()):min(gray.shape[0], face.bottom()),
+                       max(0, face.left()):min(gray.shape[1], face.right())
+                       ]
+            cv2.rectangle(img, (face.left(), face.top()), (face.right(), face.bottom()), color=(255, 0, 0),
+                          thickness=2)
+            face_img = cv2.resize(face_img, (100, 100))
+            l_i, lkp, ld, la = self.get_left_eye_attributes(face_img, self.predictor, (24, 24, 1))
+            r_i, rkp, rd, ra = self.get_right_eye_attributes(face_img, self.predictor, (24, 24, 1))
 
-            # print(img.shape)
-            gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-            faces = self.detector(gray)
-            for i, face in enumerate(faces):
-                face_img = gray[
-                           max(0, face.top()):min(gray.shape[0], face.bottom()),
-                           max(0, face.left()):min(gray.shape[1], face.right())
-                           ]
-                cv2.rectangle(img, (face.left(), face.top()), (face.right(), face.bottom()), color=(255, 0, 0),
-                              thickness=2)
-                face_img = cv2.resize(face_img, (100, 100))
-                l_i, lkp, ld, la = self.get_left_eye_attributes(face_img, self.predictor, (24, 24, 1))
-                r_i, rkp, rd, ra = self.get_right_eye_attributes(face_img, self.predictor, (24, 24, 1))
+            # cv2.imshow("Left eye: ",l_i)
+            # for kp in lkp:
+            #     cv2.circle(l_i,(kp[0],kp[1]),1,(255,255,0))
+            # cv2.imshow("Right eye: ",r_i)
+            l_i = l_i.reshape(-1, 24, 24, 1).astype(np.float32) / 255
+            r_i = r_i.reshape(-1, 24, 24, 1).astype(np.float32) / 255
 
-                # cv2.imshow("Left eye: ",l_i)
-                # for kp in lkp:
-                #     cv2.circle(l_i,(kp[0],kp[1]),1,(255,255,0))
-                # cv2.imshow("Right eye: ",r_i)
-                l_i = l_i.reshape(-1, 24, 24, 1).astype(np.float32) / 255
-                r_i = r_i.reshape(-1, 24, 24, 1).astype(np.float32) / 255
+            lkp = np.expand_dims(lkp, 1).astype(np.float32) / 24
+            ld = np.expand_dims(ld, 1).astype(np.float32) / 24
+            la = np.expand_dims(la, 1).astype(np.float32) / np.pi
 
-                lkp = np.expand_dims(lkp, 1).astype(np.float32) / 24
-                ld = np.expand_dims(ld, 1).astype(np.float32) / 24
-                la = np.expand_dims(la, 1).astype(np.float32) / np.pi
+            rkp = np.expand_dims(rkp, 1).astype(np.float32) / 24
+            rd = np.expand_dims(rd, 1).astype(np.float32) / 24
+            ra = np.expand_dims(ra, 1).astype(np.float32) / np.pi
 
-                rkp = np.expand_dims(rkp, 1).astype(np.float32) / 24
-                rd = np.expand_dims(rd, 1).astype(np.float32) / 24
-                ra = np.expand_dims(ra, 1).astype(np.float32) / np.pi
+            lkp = lkp.reshape(-1, 1, 11, 2)
+            ld = ld.reshape(-1, 1, 11, 1)
+            la = la.reshape(-1, 1, 11, 1)
 
-                lkp = lkp.reshape(-1, 1, 11, 2)
-                ld = ld.reshape(-1, 1, 11, 1)
-                la = la.reshape(-1, 1, 11, 1)
+            rkp = rkp.reshape(-1, 1, 11, 2)
+            rd = rd.reshape(-1, 1, 11, 1)
+            ra = ra.reshape(-1, 1, 11, 1)
 
-                rkp = rkp.reshape(-1, 1, 11, 2)
-                rd = rd.reshape(-1, 1, 11, 1)
-                ra = ra.reshape(-1, 1, 11, 1)
+            left_prediction = self.model.predict([l_i, lkp, ld, la])[0]
+            right_prediction = self.model.predict([r_i, rkp, rd, ra])[0]
 
-                left_prediction = self.model.predict([l_i, lkp, ld, la])[0]
-                right_prediction = self.model.predict([r_i, rkp, rd, ra])[0]
+            left_arg_max = np.argmax(left_prediction)
+            right_arg_max = np.argmax(right_prediction)
 
-                left_arg_max = np.argmax(left_prediction)
-                right_arg_max = np.argmax(right_prediction)
+            # Both eyes are closed
+            if left_arg_max == 0 & right_arg_max == 0:
+                return True
+            # both eyes are open
+            else:
+                return False
 
-                # Both eyes are closed
-                if left_arg_max == 0 & right_arg_max == 0:
-                    return True
-                # both eyes are open
-                else:
-                    return False
-
-                # if left_arg_max ==0:
-                #    left_text = "Left eye Closed"
-                # else:
-                #    left_text = "Left eye Opened"
-                # if right_arg_max ==0:
-                #    right_text = "Right eye Closed"
-                # else:
-                #    right_text = "Right eye Opened"
-                # cv2.putText(img,left_text,(face.left()+10,face.top()+10), cv2.FONT_HERSHEY_DUPLEX, 0.4,color=(0,0,255),thickness=1)
-                # cv2.putText(img,right_text,(face.left()+10,face.top()+30), cv2.FONT_HERSHEY_DUPLEX, 0.4,color=(0,0,255),thickness=1)
-            # cv2.imshow("Image",img)
-            # cv2.waitKey(0)
-            # cv2.destroyAllWindows()
-        else:
-            print("Unable to read image from", image_path)
+            # if left_arg_max ==0:
+            #    left_text = "Left eye Closed"
+            # else:
+            #    left_text = "Left eye Opened"
+            # if right_arg_max ==0:
+            #    right_text = "Right eye Closed"
+            # else:
+            #    right_text = "Right eye Opened"
+            # cv2.putText(img,left_text,(face.left()+10,face.top()+10), cv2.FONT_HERSHEY_DUPLEX, 0.4,color=(0,0,255),thickness=1)
+            # cv2.putText(img,right_text,(face.left()+10,face.top()+30), cv2.FONT_HERSHEY_DUPLEX, 0.4,color=(0,0,255),thickness=1)
+        # cv2.imshow("Image",img)
+        # cv2.waitKey(0)
+        # cv2.destroyAllWindows()
