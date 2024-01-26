@@ -6,7 +6,6 @@ class UsersStorageController:
         self._users_path = "../data/users/users.obj"
 
     def retrieve_users(self):  # It retrieves from a file all the registered users and associated data
-
         return joblib.load(self._users_path)
 
     def save_users(self, users):
