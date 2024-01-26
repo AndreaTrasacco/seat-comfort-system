@@ -12,6 +12,5 @@ class TextFieldView():
 
         self.frame.pack(side=tk.TOP)
 
-    def send_text(self):
-        text = self.entry.get()
-        # TODO codice per gestire l'invio del nome
+    def get_text(self):
+        return self.entry.get()

@@ -1,27 +1,63 @@
+import threading
+import time
+
+import numpy as np
+import tkinter as tk
+import requests
+
 from eyesdetection.eyes_detector import EyesDetector
+from gui.camera_view import CameraView
+from gui.rigth_side_view import RightSideView
+from gui.textfield_view import TextFieldView
 from seatcomfortlogic.users_storage_controller import UsersStorageController
 from userrecognition.user_recognizer import UserRecognizer
 
+# lock to ensure mutual exclusion for the access of the frame
+shared_frame = threading.Lock()
+actual_frame = ""
+
 
 class SeatComfortController:
-    def __init__(self):
+    def __init__(self, master):
+        # initialize the GUI
+        self.master = master
+        self.textfield_view = TextFieldView(self.master)
+        self.camera_view = CameraView(self.master)
+        self.right_side_view = RightSideView(self.master)
+
+        self.camera_endpoint = "http://169.254.101.5:5000/Raspberry/photo"  # TODO mettere corretto
+
         self._users_storage_controller = UsersStorageController()
         self._users = self._users_storage_controller.retrieve_users()
         self._need_detector = EyesDetector()
         self._user_recognizer = UserRecognizer()
 
+    def get_capture(self):
+        while True:
+            time.sleep(1)
+            response = requests.get(self.camera_endpoint)
+            json_data = response.json()
+            with shared_frame:
+                actual_frame = np.array(json_data['data'])
+                self.camera_view.update_image(actual_frame)
+
     def main(self):
         # Create the view
+        root = tk.Tk()
+        app = SeatComfortController(root)
+        root.mainloop()
 
         # Start thread for capturing frames
+        camera_thread = threading.Thread(target=self.get_capture)
+        camera_thread.daemon = True
+        camera_thread.start()
 
         pass
 
     def _signup_button_handler(self):
-        # TODO GET Name FROM TEXTFIELD
+        name = self.textfield_view.get_text()
         # TODO GET img FROM CAMERA - ATTENTION
         img = []
-        name = ""
         if name != '':
             self._user_recognizer.register_user(name, img)
 
