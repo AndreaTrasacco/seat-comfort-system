@@ -6,7 +6,7 @@ class CameraView():
     def __init__(self, master):
         self.master = master
         self.frame = tk.Frame(master)
-        self.image_label = tk.Label(self.frame)
+        self.image_label = tk.Label(self.frame, height=576, width=432, bg="white")
         self.frame.pack(side=tk.LEFT)
         self.image_label.pack()
 

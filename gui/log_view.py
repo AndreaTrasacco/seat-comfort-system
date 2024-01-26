@@ -4,11 +4,11 @@ class LogView():
     def __init__(self, master):
         self.master = master
         self.frame = tk.Frame(master)
-        self.log_text = tk.Text(self.frame, height=10, width=30)
+        self.log_text = tk.Text(self.frame, height=10, width=70)
         self.scrollbar = tk.Scrollbar(self.frame, command=self.log_text.yview)
-        self.log_text.config(yscrollcommand=self.scrollbar.set)
+        self.log_text.config(yscrollcommand=self.scrollbar.set, state=tk.DISABLED)
 
-        self.frame.pack(side=tk.BOTTOM, padx=10)
+        self.frame.pack(side=tk.BOTTOM, padx=10, pady=20)
         self.log_text.pack(side=tk.LEFT)
         self.scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
 
