@@ -5,8 +5,12 @@ import tkinter as tk
 import numpy as np
 import requests
 
+from eyesdetection.eyes_detector import EyesDetector
 from gui.camera_view import CameraView
+from gui.rigth_side_view import RightSideView
+from gui.textfield_view import TextFieldView
 from seatcomfortlogic.users_storage_controller import UsersStorageController
+from userrecognition.user_recognizer import UserRecognizer
 
 # lock to ensure mutual exclusion for the access of the frame
 shared_frame = threading.Lock()
@@ -17,20 +21,21 @@ class SeatComfortController:
     def __init__(self):
         # initialize the GUI
         self.master = tk.Tk()
-        # self.textfield_view = TextFieldView(self.master)
+        self.textfield_view = TextFieldView(self.master, self)
         self.camera_view = CameraView(self.master)
-        # self.right_side_view = RightSideView(self.master)
+        self.right_side_view = RightSideView(self.master)
 
-        self.camera_endpoint = "http://169.254.101.5:5000/Raspberry/photo"  # TODO mettere corretto
+        self.camera_endpoint = "http://169.254.101.5:5000/Raspberry/photo"
+        self.RECEIVE_PHOTO_INTERVAL = 1
 
         self._users_storage_controller = UsersStorageController()
         self._users = self._users_storage_controller.retrieve_users()
-        # self._need_detector = EyesDetector()
-        # self._user_recognizer = UserRecognizer()
+        self._need_detector = EyesDetector()
+        self._user_recognizer = UserRecognizer()
 
     def get_capture(self):
         while True:
-            time.sleep(1) #TODO METTERE IN UNA COSTANTE
+            time.sleep(self.RECEIVE_PHOTO_INTERVAL)
             response = requests.get(self.camera_endpoint)
             json_data = response.json()
             with shared_frame:
@@ -38,16 +43,17 @@ class SeatComfortController:
                 self.camera_view.update_image(actual_frame)
 
     def main(self):
-        # Create the view
         # Start thread for capturing frames
         camera_thread = threading.Thread(target=self.get_capture)
         camera_thread.daemon = True
         camera_thread.start()
 
-        self.master.mainloop() # TODO FAR PARTIRE CON THREAD
+        # create view
+        self.master.mainloop()
 
     def signup_button_handler(self):
         name = self.textfield_view.get_text()
+        print(name)
         # TODO GET img FROM CAMERA - ATTENTION
         img = []
         if name != '':
