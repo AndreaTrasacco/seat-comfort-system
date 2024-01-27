@@ -1,20 +1,24 @@
+import copy
+import json
+import socket
 import threading
 import time
 import tkinter as tk
 
 import numpy as np
-import json
-import socket
 
 from gui.camera_view import CameraView
-from seatcomfortlogic.users_storage_controller import UsersStorageController
+from seatcomfortlogic.users_storage_controller import UsersStorageController, User
 
 # lock to ensure mutual exclusion for the access of the frame
 shared_frame = threading.Lock()
-actual_frame = ""
+actual_frame = None
 
 
 class SeatComfortController:
+    AWAKE_POSITION_DEFAULT = 0  # Position of the back seat when the user is awake
+    SLEEPING_POSITION_DEFAULT = 60  # Degrees w.r.t "awake position" of the back seat when the user is sleeping
+
     def __init__(self):
         # initialize the GUI
         self.master = tk.Tk()
@@ -62,7 +66,8 @@ class SeatComfortController:
                 # Reshape the NumPy array to the original image shape
                 image = image_np.reshape((960, 540, 3))
                 with shared_frame:
-                    self.camera_view.update_image(image)
+                    actual_frame = image
+                    self.camera_view.update_image(actual_frame)
 
         except KeyboardInterrupt:
             print("Client interrupted by keyboard. Closing connection.")
@@ -75,14 +80,18 @@ class SeatComfortController:
         camera_thread.daemon = True
         camera_thread.start()
 
-        self.master.mainloop() # TODO FAR PARTIRE CON THREAD
+        self.master.mainloop()  # TODO FAR PARTIRE CON THREAD
 
     def signup_button_handler(self):
         name = self.textfield_view.get_text()
-        # TODO GET img USING LOCK
-        img = []
+        with shared_frame:
+            img = copy.deepcopy(actual_frame)
         if name != '':
             self._user_recognizer.register_user(name, img)
+            new_user = User(name,
+                            SeatComfortController.AWAKE_POSITION_DEFAULT,
+                            SeatComfortController.SLEEPING_POSITION_DEFAULT)
+            self._users.append(new_user)
 
 
 if __name__ == '__main__':

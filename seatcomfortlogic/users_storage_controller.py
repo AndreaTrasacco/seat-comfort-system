@@ -18,14 +18,20 @@ class User:  # Model class
         self._awake_position = awake_position
         self._sleeping_position = sleeping_position
 
-    def set_awake_position(self, awake_position):
-        self._awake_position = awake_position
+    def set_position(self, position, mode="awake"):
+        if mode == "awake":
+            self._awake_position = position
+        else:
+            self._sleeping_position = position
+
+    def update_position_by_delta(self, delta, mode="awake"):
+        if mode == "awake":
+            self._awake_position += delta
+        else:
+            self._sleeping_position += delta
 
     def get_awake_position(self):
         return self._awake_position
-
-    def set_sleeping_position(self, sleeping_position):
-        self._sleeping_position = sleeping_position
 
     def get_sleeping_position(self):
         return self._sleeping_position

@@ -27,33 +27,31 @@ class ImagePicker:  # Flask server listening for GET requests for photos (captur
         host = '169.254.101.5'
         port = 8000
 
-        # Create a socket object
         server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
-        # Bind the socket to a specific address and port
         server_socket.bind((host, port))
-
-        # Listen for incoming connections (max 1 connection in the queue)
         server_socket.listen(1)
 
         print(f"Server listening on {host}:{port}")
-
-        # Accept a connection from a client
-        client_socket, client_address = server_socket.accept()
-        print(f"Connection from {client_address}")
-
         try:
             while True:
-                # Receive data from the client
-                data = client_socket.recv(1024).decode()
-                # received_data = json.loads(data)
+                # Accept a connection from a client
+                client_socket, client_address = server_socket.accept()
+                print(f"Connection from {client_address}")
 
-                # Serialize the NumPy array
-                serialized_data = self.capture_image().tobytes()
+                try:
+                    while True:
+                        # Receive data from the client
+                        data = client_socket.recv(1024).decode()
+                        # received_data = json.loads(data)
 
-                # Send the actual serialized data
-                client_socket.sendall(serialized_data)
+                        # Serialize the NumPy array
+                        serialized_data = self.capture_image().tobytes()
 
+                        # Send the actual serialized data
+                        client_socket.sendall(serialized_data)
+                except ConnectionResetError:
+                    print("Client disconnected")
+                    client_socket.close()
 
         except KeyboardInterrupt:
             print("Server interrupted by keyboard. Closing connection.")
