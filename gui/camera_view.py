@@ -1,5 +1,4 @@
 import tkinter as tk
-
 import numpy as np
 from PIL import Image, ImageTk
 

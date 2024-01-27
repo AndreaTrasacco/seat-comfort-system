@@ -13,6 +13,7 @@ from imagepicker.image_picker_client import ImagePickerClient
 from seatcomfortlogic.users_storage_controller import UsersStorageController, User
 from userrecognition.user_recognizer import UserRecognizer
 
+
 class SeatComfortController:
     AWAKE_POSITION_DEFAULT = 0  # Position of the back seat when the user is awake
     SLEEPING_POSITION_DEFAULT = 60  # Degrees w.r.t "awake position" of the back seat when the user is sleeping
@@ -81,6 +82,7 @@ class SeatComfortController:
     def add_log_message(self, message):
         with glob.log_lock:
             self.right_side_view.get_log_view().add_message(message)
+
 
 if __name__ == '__main__':
     glob.controller.main()

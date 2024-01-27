@@ -1,11 +1,10 @@
 import copy
 import time
+import globals as glob
 from datetime import datetime
 from threading import Thread
 
 from deepface import DeepFace
-
-from seatcomfortlogic.seat_comfort_controller import shared_frame_lock, actual_frame, user_lock, logged_user
 
 
 class MoodDetector(Thread):
@@ -37,8 +36,8 @@ class MoodDetector(Thread):
             time.sleep(1 / self.frequency)
             act_seconds += (1 / self.frequency)
             # 2) took the actual frame
-            with shared_frame_lock:
-                actual_frame_cp = copy.deepcopy(actual_frame)
+            with glob.shared_frame_lock:
+                actual_frame_cp = copy.deepcopy(glob.actual_frame)
             # 3) classify the frame
             emotion, class_emotion = self.get_mood(actual_frame_cp)
             # 4) print in the log the emotion detected
@@ -47,13 +46,13 @@ class MoodDetector(Thread):
             if class_emotion == 1:
                 # 5.1) restore the previous position
                 if self.user_state:  # if user_state is True (seat is in sleeping position) restore the awake position
-                    with user_lock:
-                        position = logged_user.get_awake_position()
-                        logged_user.set_mode(False)
+                    with glob.user_lock:
+                        position = glob.logged_user.get_awake_position()
+                        glob.logged_user.set_mode(False)
                 else:
-                    with user_lock:
-                        position = logged_user.get_sleeping_position()
-                        logged_user.set_mode(True)
+                    with glob.user_lock:
+                        position = glob.logged_user.get_sleeping_position()
+                        glob.logged_user.set_mode(True)
                 self.controller.rotate_back_seat(position, True)
                 # 5.2) print in the log that the position is changed
                 self.controller.add_log_message(f"mood_detector - - [{datetime.now()}]: bad emotion detected, "

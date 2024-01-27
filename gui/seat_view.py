@@ -1,10 +1,11 @@
 import math
 import tkinter as tk
+import globals as glob
 from PIL import ImageTk, Image
 
 
 class SeatView():
-    def __init__(self, master, controller):
+    def __init__(self, master):
         self.master = master
         self.frame = tk.Frame(master, bg="white")
         self.seat = Image.open("../gui/img/seat.png")
@@ -36,11 +37,11 @@ class SeatView():
 
         self.left_arrow_label = tk.Label(self.frame, image=self.left_arrow_photo, cursor="hand2")
         self.left_arrow_label.pack(side=tk.LEFT)
-        self.left_arrow_label.bind("<Button-1>", controller.left_arrow_handler)
+        self.left_arrow_label.bind("<Button-1>", glob.controller.left_arrow_handler)
 
         self.right_arrow_label = tk.Label(self.frame, image=self.right_arrow_photo, cursor="hand2")
         self.right_arrow_label.pack(side=tk.RIGHT)
-        self.right_arrow_label.bind("<Button-1>", controller.right_arrow_handler)
+        self.right_arrow_label.bind("<Button-1>", glob.controller.right_arrow_handler)
 
         self.frame.pack(side=tk.TOP)
 
@@ -50,7 +51,7 @@ class SeatView():
         else:
             self.actual_degree = degrees
         rotated_image = self.back_seat.rotate(self.actual_degree, resample=Image.BICUBIC, center=((self.back_seat.width // 2) - 27, self.back_seat.height - 72))
-        rotated_image_tk = ImageTk.PhotoImage(rotated_image, master=self.master)
+        rotated_image_tk = ImageTk.PhotoImage(rotated_image)
         self.canvas.itemconfig(self.canvas_back_seat, image=rotated_image_tk)
         #self.back_seat = rotated_image
         self.back_seat_tk = rotated_image_tk

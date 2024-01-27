@@ -1,12 +1,13 @@
 import tkinter as tk
+import globals as glob
 
 
 class TextFieldView():
-    def __init__(self, master, controller):
+    def __init__(self, master):
         self.master = master
         self.frame = tk.Frame(master)
         self.entry = tk.Entry(self.frame, width=50)
-        self.button = tk.Button(self.frame, text="Sign Up", command=controller.signup_button_handler)
+        self.button = tk.Button(self.frame, text="Sign Up", command=glob.controller.signup_button_handler)
         self.entry.pack(side=tk.LEFT, padx=(0, 5))
         self.button.pack(side=tk.LEFT, padx=(5, 0))
 
