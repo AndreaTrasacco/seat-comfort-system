@@ -4,7 +4,7 @@ from threading import Thread
 
 from PIL import Image
 from deepface import DeepFace
-
+from seatcomfortlogic.seat_comfort_controller import stop_flag
 
 class UserRecognizer(Thread):
     def __init__(self):
@@ -22,5 +22,6 @@ class UserRecognizer(Thread):
             return user_name
 
     def run(self):
-        while True:
+        while not stop_flag:
             time.sleep(1/self._frequency)
+            # TODO CONTINUE --> Take frame, call detect_user, if result != None --> return

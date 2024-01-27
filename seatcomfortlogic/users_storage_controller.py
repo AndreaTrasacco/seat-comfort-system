@@ -5,11 +5,11 @@ class UsersStorageController:
     def __init__(self):
         self._users_path = "../data/users/"
 
-    def retrieve_user(self, name):  # It retrieves from a file all the registered users and associated data
+    def retrieve_user(self, name):  # It retrieves from a file the registered user and associated data
         return joblib.load(self._users_path + name)
 
-    def save_user(self, user, name):
-        joblib.dump(user, self._users_path + name)
+    def save_user(self, user):  # It saves the user
+        joblib.dump(user, self._users_path + user.get_name())
 
 
 class User:  # Model class
@@ -35,3 +35,6 @@ class User:  # Model class
 
     def get_sleeping_position(self):
         return self._sleeping_position
+
+    def get_name(self):
+        return self._name

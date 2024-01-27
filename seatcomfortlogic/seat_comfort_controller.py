@@ -10,7 +10,9 @@ from PIL import Image
 
 from gui.camera_view import CameraView
 from gui.rigth_side_view import RightSideView
+from imagepicker.image_picker_client import ImagePickerClient
 from seatcomfortlogic.users_storage_controller import UsersStorageController, User
+from userrecognition.user_recognizer import UserRecognizer
 
 # lock to ensure mutual exclusion for the access of the frame
 shared_frame_lock = threading.Lock()
@@ -25,6 +27,10 @@ seat_position_lock = threading.Lock()
 
 # lock for the log
 log_lock = threading.Lock()
+
+
+# Flag to stop Threads
+stop_flag: bool = False
 
 
 class SeatComfortController:
@@ -42,49 +48,9 @@ class SeatComfortController:
         self.camera_endpoint = "http://169.254.101.5:5000/Raspberry/photo"  # TODO mettere corretto
 
         self._users_storage_controller = UsersStorageController()
-        self._users = self._users_storage_controller.retrieve_users()
         # self._need_detector = EyesDetector()
         # self._user_recognizer = UserRecognizer()
-
-    def get_capture(self):
-        # Server configuration
-        host = '169.254.101.5'
-        port = 8000
-
-        # Create a socket object
-        client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
-        # Connect to the server
-        client_socket.connect((host, port))
-
-        try:
-            while True:
-                time.sleep(0.05)  # TODO METTERE IN UNA COSTANTE
-                # Send a message to the server
-                message_to_send = {"message": "request_for_photo"}
-                client_socket.send(json.dumps(message_to_send).encode())
-                # Receive the welcome message from the server
-
-                # Receive the actual image data
-                # image_data = client_socket.recv(1555200)
-                image_data = b''
-                while len(image_data) < 1555200:
-                    data = client_socket.recv(1555200 - len(image_data))
-                    if not data:
-                        break  # Connection closed
-                    image_data += data
-
-                # Convert the received data to a numpy array
-                image_np = np.frombuffer(image_data, dtype=np.uint8)
-                # Reshape the NumPy array to the original image shape
-                image = image_np.reshape((960, 540, 3))
-                with shared_frame_lock:
-                    actual_frame = image
-                    self.camera_view.update_image(actual_frame)
-
-        except KeyboardInterrupt:
-            print("Client interrupted by keyboard. Closing connection.")
-            client_socket.close()
+        self._camera_thread = ImagePickerClient()
 
     def main(self):
         # Create the view
@@ -93,20 +59,32 @@ class SeatComfortController:
         camera_thread.daemon = True
         camera_thread.start()
 
+        user_recognizer_thread = UserRecognizer()
+        user_recognizer_thread.start()
+
+        user_recognizer_thread.join()  # Wait for the user detection
+
         self.master.mainloop()  # TODO FAR PARTIRE CON THREAD
+        stop_flag = True
+        camera_thread.join()  # TODO FOR ALL THE THREADS
+        if logged_user is not None:
+            self._users_storage_controller.save_user(logged_user)
+
+    def run(self):
+        pass
+
 
     def signup_button_handler(self):
         name = self.textfield_view.get_text()
         with shared_frame_lock:
             img = copy.deepcopy(actual_frame)
         if name != '':
-            self._user_recognizer.register_user(name, img)
             img_pil = Image.fromarray(img)
             img_pil.save(self._user_faces_dir + "/" + name + ".jpg")
             new_user = User(name,
                             SeatComfortController.AWAKE_POSITION_DEFAULT,
                             SeatComfortController.SLEEPING_POSITION_DEFAULT)
-            self._users.append(new_user)
+            self._users_storage_controller.save_user(new_user)
 
     def left_arrow_handler(self, event):
         self.rotate_back_seat(10)

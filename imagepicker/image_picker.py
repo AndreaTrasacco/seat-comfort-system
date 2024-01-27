@@ -9,7 +9,7 @@ from PIL import Image
 from picamera import PiCamera
 
 
-class ImagePicker:  # Flask server listening for GET requests for photos (captured at the moment of request)
+class ImagePicker:  # Server listening for requests for photos (captured at the moment of request)
     def __init__(self):
         self._camera = PiCamera()
         time.sleep(2)
