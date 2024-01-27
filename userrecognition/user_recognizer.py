@@ -24,4 +24,4 @@ class UserRecognizer(Thread):
     def run(self):
         while not stop_flag:
             time.sleep(1/self._frequency)
-            # TODO CONTINUE --> Take frame, call detect_user, if result != None --> return
+            # TODO CONTINUE --> Take frame, call detect_user, if result != None --> initialize the logged_user and return

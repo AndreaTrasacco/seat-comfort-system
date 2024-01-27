@@ -1,7 +1,9 @@
+from threading import Thread
+
 from deepface import DeepFace
 
 
-class MoodDetector:
+class MoodDetector(Thread):
     def __init__(self):
         self._bad_emotions = ["angry", "disgust"]
 
@@ -9,5 +11,8 @@ class MoodDetector:
         detection = DeepFace.analyze(img, actions=["emotion"])
         emotion = detection[0]['dominant_emotion']
         if emotion in self._bad_emotions:  # If the user didn't appreciate the change of seat position by system
-            return 1
-        return 0  # The user appreciated the change of seat position by system
+            return emotion, 1
+        return emotion, 0  # The user appreciated the change of seat position by system
+
+    def run(self):
+        pass

@@ -53,25 +53,21 @@ class SeatComfortController:
         self._camera_thread = ImagePickerClient()
 
     def main(self):
-        # Create the view
-        # Start thread for capturing frames
-        camera_thread = threading.Thread(target=self.get_capture)
-        camera_thread.daemon = True
-        camera_thread.start()
-
-        user_recognizer_thread = UserRecognizer()
-        user_recognizer_thread.start()
-
-        user_recognizer_thread.join()  # Wait for the user detection
-
+        controller_thread = threading.Thread(target=self.run())
+        controller_thread.start()
         self.master.mainloop()  # TODO FAR PARTIRE CON THREAD
-        stop_flag = True
-        camera_thread.join()  # TODO FOR ALL THE THREADS
+        stop_flag = True  # TODO TESTARE
+        self._camera_thread.join()  # TODO FOR ALL THE THREADS
         if logged_user is not None:
             self._users_storage_controller.save_user(logged_user)
 
     def run(self):
-        pass
+        # Start thread for capturing frames
+        self._camera_thread.start()
+        user_recognizer_thread = UserRecognizer()
+        user_recognizer_thread.start()
+        user_recognizer_thread.join()  # Wait for the user detection
+        # TODO Start other thread
 
 
     def signup_button_handler(self):
