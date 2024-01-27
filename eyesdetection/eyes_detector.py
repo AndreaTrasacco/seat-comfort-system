@@ -1,8 +1,9 @@
 import time
 import copy
+from datetime import datetime
 from threading import Thread
 from eyesdetection.eyes_detection import EyesDetection
-from seatcomfortlogic.seat_comfort_controller import shared_frame_lock, actual_frame
+from seatcomfortlogic.seat_comfort_controller import shared_frame_lock, actual_frame, user_lock, logged_user
 
 
 class EyesDetector(Thread):
@@ -21,7 +22,6 @@ class EyesDetector(Thread):
         and checks for a certain number of frames closed or open eyes are detected
         :return:
         """
-        # TODO per recuperare il frame creare una copia, l'assegnamento è solo un riferimento
         # 1) while true + sleep(frequency)
         while True:
             time.sleep(1/self.frequency)
@@ -40,16 +40,17 @@ class EyesDetector(Thread):
                 # 4) if for num_consecutive_frame you have detected closed eyes
                 if closed_eyes:
                     # 4.1) put the seat in the preferred position for sleeping
-
-                #   4.2) TODO remember to do the change in mutual exclusion
-                #   4.3) get the lock of the log
-                #   4.4) print on the log the message
-        # 5) if for num_consecutive_frame you have detected open eyes
-                if closed_eyes == False:
-        #       5.1) put the seat in the preferred position for working
-        #       5.2) TODO remember to do the change in mutual exclusion
-        #       5.3) get the lock of the log
-        #       5.4) print on the log the message
+                    with user_lock:
+                        self.controller.rotate_back_seat(logged_user.get_sleeping_position(), True)
+                    # 4.2) print on the log the message
+                    self.controller.add_log_message(f"eyes_detector - - [{datetime.now()}]: sleeping position set")
+                # 5) if for num_consecutive_frame you have detected open eyes
+                if not closed_eyes:
+                    # 5.1) put the seat in the preferred position for working
+                    with user_lock:
+                        self.controller.rotate_back_seat(logged_user.get_awake_position(), True)
+                    # 5.2) print on the log the message
+                    self.controller.add_log_message(f"eyes_detector - - [{datetime.now()}]: awake position set")
             self.prev_detection = closed_eyes
 
     def detect_eyes(self, img):

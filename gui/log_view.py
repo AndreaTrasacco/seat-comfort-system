@@ -12,6 +12,6 @@ class LogView():
         self.log_text.pack(side=tk.LEFT)
         self.scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
 
-    def add_log_message(self, message):
+    def add_message(self, message):
         self.log_text.insert(tk.END, message + "\n")
         self.log_text.yview(tk.END)

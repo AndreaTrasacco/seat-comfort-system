@@ -23,6 +23,10 @@ logged_user = None
 # lock for the seat position
 seat_position_lock = threading.Lock()
 
+# lock for the log
+log_lock = threading.Lock()
+
+
 class SeatComfortController:
     AWAKE_POSITION_DEFAULT = 0  # Position of the back seat when the user is awake
     SLEEPING_POSITION_DEFAULT = 60  # Degrees w.r.t "awake position" of the back seat when the user is sleeping
@@ -115,6 +119,10 @@ class SeatComfortController:
     def rotate_back_seat(self, degrees, absolute=False):
         with seat_position_lock:
             self.right_side_view.get_seat_view().rotate(degrees, absolute)
+
+    def add_log_message(self, message):
+        with log_lock:
+            self.right_side_view.get_log_view().add_message(message)
 
 
 if __name__ == '__main__':
