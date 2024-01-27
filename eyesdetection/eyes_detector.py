@@ -2,17 +2,18 @@ import time
 import copy
 from threading import Thread
 from eyesdetection.eyes_detection import EyesDetection
-from seatcomfortlogic.seat_comfort_controller import shared_frame, actual_frame
+from seatcomfortlogic.seat_comfort_controller import shared_frame_lock, actual_frame
 
 
 class EyesDetector(Thread):
-    def __init__(self, frequency, num_cons_frame):
+    def __init__(self, frequency, num_cons_frame, controller):
         super(EyesDetector, self).__init__()
         self.eyes_detection = EyesDetection()
         self.frequency = frequency
         self.num_cons_frame = num_cons_frame
         self.act_cons_frame = 0
         self.prev_detection = None
+        self.controller = controller
 
     def run(self):
         """
@@ -25,7 +26,7 @@ class EyesDetector(Thread):
         while True:
             time.sleep(1/self.frequency)
             # 2) took the actual frame (lock)
-            with shared_frame:
+            with shared_frame_lock:
                 actual_frame_cp = copy.deepcopy(actual_frame)
             # 3) classify the frame
             closed_eyes = self.detect_eyes(actual_frame_cp)
@@ -38,7 +39,7 @@ class EyesDetector(Thread):
             if self.act_cons_frame >= self.num_cons_frame:
                 # 4) if for num_consecutive_frame you have detected closed eyes
                 if closed_eyes:
-                #   4.1) put the seat in the preferred position for sleeping
+                    # 4.1) put the seat in the preferred position for sleeping
 
                 #   4.2) TODO remember to do the change in mutual exclusion
                 #   4.3) get the lock of the log
