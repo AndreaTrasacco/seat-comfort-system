@@ -10,6 +10,7 @@ from seatcomfortlogic.seat_comfort_controller import shared_frame_lock, actual_f
 
 class MoodDetector(Thread):
     def __init__(self, tot_seconds, frequency, controller, user_state):
+        super(MoodDetector, self).__init__()
         self._bad_emotions = ["angry", "disgust"]
         self.tot_seconds = tot_seconds
         self.frequency = frequency
