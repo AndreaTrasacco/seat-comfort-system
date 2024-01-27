@@ -20,7 +20,6 @@ class EyesDetector(Thread):
         """
         Thread who handles the eyes detector, with a certain frequency look the frame
         and checks for a certain number of frames closed or open eyes are detected
-        :return:
         """
         # 1) while true + sleep(frequency)
         while True:
@@ -37,6 +36,7 @@ class EyesDetector(Thread):
                 self.act_cons_frame = 0
 
             if self.act_cons_frame >= self.num_cons_frame:
+                self.act_cons_frame = 0
                 # 4) if for num_consecutive_frame you have detected closed eyes
                 if closed_eyes:
                     # 4.1) put the seat in the preferred position for sleeping
