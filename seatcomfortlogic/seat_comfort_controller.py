@@ -8,12 +8,16 @@ import tkinter as tk
 import numpy as np
 
 from gui.camera_view import CameraView
+from gui.rigth_side_view import RightSideView
 from seatcomfortlogic.users_storage_controller import UsersStorageController, User
 
 # lock to ensure mutual exclusion for the access of the frame
-shared_frame = threading.Lock()
+shared_frame_lock = threading.Lock()
 actual_frame = None
 
+# actual logged user
+user_lock = threading.Lock()
+logged_user = None
 
 class SeatComfortController:
     AWAKE_POSITION_DEFAULT = 0  # Position of the back seat when the user is awake
@@ -24,7 +28,7 @@ class SeatComfortController:
         self.master = tk.Tk()
         # self.textfield_view = TextFieldView(self.master)
         self.camera_view = CameraView(self.master)
-        # self.right_side_view = RightSideView(self.master)
+        self.right_side_view = RightSideView(self.master)
 
         self.camera_endpoint = "http://169.254.101.5:5000/Raspberry/photo"  # TODO mettere corretto
 
@@ -65,7 +69,7 @@ class SeatComfortController:
                 image_np = np.frombuffer(image_data, dtype=np.uint8)
                 # Reshape the NumPy array to the original image shape
                 image = image_np.reshape((960, 540, 3))
-                with shared_frame:
+                with shared_frame_lock:
                     actual_frame = image
                     self.camera_view.update_image(actual_frame)
 
@@ -84,7 +88,7 @@ class SeatComfortController:
 
     def signup_button_handler(self):
         name = self.textfield_view.get_text()
-        with shared_frame:
+        with shared_frame_lock:
             img = copy.deepcopy(actual_frame)
         if name != '':
             self._user_recognizer.register_user(name, img)
@@ -92,6 +96,17 @@ class SeatComfortController:
                             SeatComfortController.AWAKE_POSITION_DEFAULT,
                             SeatComfortController.SLEEPING_POSITION_DEFAULT)
             self._users.append(new_user)
+
+    def left_arrow_handler(self, event):
+        self.rotate_back_seat(10)
+        pass
+
+    def right_arrow_handler(self, event):
+        self.rotate_back_seat(-10)
+        pass
+
+    def rotate_back_seat(self, degrees, absolute=False):
+        self.right_side_view.get_seat_view().rotate(degrees, absolute)
 
 
 if __name__ == '__main__':

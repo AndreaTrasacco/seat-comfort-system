@@ -44,18 +44,11 @@ class SeatView():
 
         self.frame.pack(side=tk.TOP)
 
-    def left_arrow_handler(self, event):
-        # TODO logica della gestione della freccia sinistra
-        self.rotate_back_seat(10)
-        pass
-
-    def right_arrow_handler(self, event):
-        # TODO logica della gestione della freccia destra
-        self.rotate_back_seat(-10)
-        pass
-
-    def rotate_back_seat(self, degrees):
-        self.actual_degree += degrees
+    def rotate(self, degrees, absolute):
+        if absolute == False:
+            self.actual_degree += degrees
+        else:
+            self.actual_degree = degrees
         rotated_image = self.back_seat.rotate(self.actual_degree, resample=Image.BICUBIC, center=((self.back_seat.width // 2) - 27, self.back_seat.height - 72))
         rotated_image_tk = ImageTk.PhotoImage(rotated_image)
         self.canvas.itemconfig(self.canvas_back_seat, image=rotated_image_tk)

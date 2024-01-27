@@ -10,3 +10,9 @@ class RightSideView:
         self.seat_view = SeatView(self.master)
         self.log_view = LogView(self.master)
         self.frame.pack(side=tk.RIGHT)
+
+    def get_seat_view(self):
+        return self.seat_view
+
+    def get_log_view(self):
+        return self.log_view
