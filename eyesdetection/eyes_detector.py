@@ -31,6 +31,8 @@ class EyesDetector(Thread):
             # 3) classify the frame
             current_detection = self.detect_eyes(actual_frame_cp)
 
+            # increment the number of actual consecutive frame only if the actual detection
+            # is different from the previous state and the detection is equal to the previous
             if actual_state != current_detection and prev_detection == current_detection:
                 act_cons_frame += 1
             else:
