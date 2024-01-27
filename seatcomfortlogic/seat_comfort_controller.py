@@ -2,7 +2,7 @@ import copy
 import threading
 import time
 import tkinter as tk
-import global_start as glob
+import globals as glob
 
 from PIL import Image
 

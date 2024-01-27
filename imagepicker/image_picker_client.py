@@ -4,7 +4,7 @@ import time
 from threading import Thread
 
 import numpy as np
-import global_start as glob
+import globals as glob
 
 class ImagePickerClient(Thread):
     def run(self):
