@@ -4,10 +4,10 @@ import tkinter as tk
 
 
 class RightSideView:
-    def __init__(self, master):
+    def __init__(self, master, controller):
         self.master = master
         self.frame = tk.Frame(master)
-        self.seat_view = SeatView(self.master)
+        self.seat_view = SeatView(self.master, controller)
         self.log_view = LogView(self.master)
         self.frame.pack(side=tk.RIGHT)
 

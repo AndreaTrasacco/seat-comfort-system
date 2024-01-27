@@ -1,8 +1,9 @@
 import tkinter as tk
+
 from PIL import Image, ImageTk
 
 
-class CameraView():
+class CameraView:
     def __init__(self, master):
         self.master = master
         self.frame = tk.Frame(master)
@@ -12,8 +13,8 @@ class CameraView():
 
         # self.update_image("../data/closed_eyes.jpg")
 
-    def update_image(self, image):
-        image = Image.fromarray(image.astype("uint8"))
-        photo = ImageTk.PhotoImage(image)
+    def update_image(self, img):
+        image = Image.fromarray(img.astype("uint8"))
+        photo = ImageTk.PhotoImage(image, master=self.master)
         self.image_label.configure(image=photo)
         self.image_label.image = photo

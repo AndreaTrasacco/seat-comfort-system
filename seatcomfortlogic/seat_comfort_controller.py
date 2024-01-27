@@ -1,11 +1,8 @@
 import copy
-import json
-import socket
 import threading
 import time
 import tkinter as tk
 
-import numpy as np
 from PIL import Image
 
 from gui.camera_view import CameraView
@@ -28,7 +25,6 @@ seat_position_lock = threading.Lock()
 # lock for the log
 log_lock = threading.Lock()
 
-
 # Flag to stop Threads
 stop_flag: bool = False
 
@@ -43,7 +39,7 @@ class SeatComfortController:
         self.master = tk.Tk()
         # self.textfield_view = TextFieldView(self.master)
         self.camera_view = CameraView(self.master)
-        self.right_side_view = RightSideView(self.master)
+        self.right_side_view = RightSideView(self.master, self)
 
         self.camera_endpoint = "http://169.254.101.5:5000/Raspberry/photo"  # TODO mettere corretto
 
@@ -51,11 +47,13 @@ class SeatComfortController:
         # self._need_detector = EyesDetector()
         # self._user_recognizer = UserRecognizer()
         self._camera_thread = ImagePickerClient()
+        self._user_recognizer_thread = UserRecognizer(self._users_storage_controller)
 
     def main(self):
-        controller_thread = threading.Thread(target=self.run())
+        global stop_flag
+        controller_thread = threading.Thread(target=self.run)
         controller_thread.start()
-        self.master.mainloop()  # TODO FAR PARTIRE CON THREAD
+        self.master.mainloop()
         stop_flag = True  # TODO TESTARE
         self._camera_thread.join()  # TODO FOR ALL THE THREADS
         if logged_user is not None:
@@ -64,11 +62,12 @@ class SeatComfortController:
     def run(self):
         # Start thread for capturing frames
         self._camera_thread.start()
-        user_recognizer_thread = UserRecognizer()
-        user_recognizer_thread.start()
-        user_recognizer_thread.join()  # Wait for the user detection
-        # TODO Start other thread
-
+        time.sleep(60)
+        self._user_recognizer_thread.start()
+        self._user_recognizer_thread.join()  # Wait for the user detection
+        self.add_log_message("USER DETECTED : " + logged_user.get_name())
+        # TODO Start other threads
+        # TODO ATTENZIONE BOTTONI
 
     def signup_button_handler(self):
         name = self.textfield_view.get_text()
@@ -81,6 +80,7 @@ class SeatComfortController:
                             SeatComfortController.AWAKE_POSITION_DEFAULT,
                             SeatComfortController.SLEEPING_POSITION_DEFAULT)
             self._users_storage_controller.save_user(new_user)
+            # TODO ATTENZIONE BOTTONI
 
     def left_arrow_handler(self, event):
         self.rotate_back_seat(10)
@@ -93,14 +93,17 @@ class SeatComfortController:
     def rotate_back_seat(self, degrees, absolute=False):
         with seat_position_lock:
             self.right_side_view.get_seat_view().rotate(degrees, absolute)
+        # TODO UPDATE USER
 
     def add_log_message(self, message):
         with log_lock:
             self.right_side_view.get_log_view().add_message(message)
 
 
+controller = SeatComfortController()
+
 if __name__ == '__main__':
-    SeatComfortController().main()
+    controller.main()
 
 '''
 constant FRAME_FREQUENCY

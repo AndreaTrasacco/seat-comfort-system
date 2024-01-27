@@ -5,14 +5,10 @@ from threading import Thread
 
 import numpy as np
 
-from seatcomfortlogic.seat_comfort_controller import stop_flag, shared_frame_lock
-
 
 class ImagePickerClient(Thread):
-    def __init__(self):
-        pass
-
-    def get_capture(self):
+    def run(self):
+        from seatcomfortlogic.seat_comfort_controller import controller, stop_flag, shared_frame_lock
         # Server configuration
         host = '169.254.101.5'
         port = 8000
@@ -46,7 +42,7 @@ class ImagePickerClient(Thread):
                 image = image_np.reshape((960, 540, 3))
                 with shared_frame_lock:
                     actual_frame = image
-                    self.camera_view.update_image(actual_frame)
+                    controller.camera_view.update_image(actual_frame)
 
         except KeyboardInterrupt:
             print("Client interrupted by keyboard. Closing connection.")
