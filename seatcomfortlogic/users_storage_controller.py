@@ -3,13 +3,13 @@ import joblib
 
 class UsersStorageController:
     def __init__(self):
-        self._users_path = "../data/users/users.obj"
+        self._users_path = "../data/users/"
 
-    def retrieve_users(self):  # It retrieves from a file all the registered users and associated data
-        return joblib.load(self._users_path)
+    def retrieve_user(self, name):  # It retrieves from a file all the registered users and associated data
+        return joblib.load(self._users_path + name)
 
-    def save_users(self, users):
-        joblib.dump(users, self._users_path)
+    def save_user(self, user, name):
+        joblib.dump(user, self._users_path + name)
 
 
 class User:  # Model class

@@ -6,6 +6,7 @@ import time
 import tkinter as tk
 
 import numpy as np
+from PIL import Image
 
 from gui.camera_view import CameraView
 from gui.rigth_side_view import RightSideView
@@ -24,6 +25,7 @@ class SeatComfortController:
     SLEEPING_POSITION_DEFAULT = 60  # Degrees w.r.t "awake position" of the back seat when the user is sleeping
 
     def __init__(self):
+        self._user_faces_dir = "../data/user_faces_db"
         # initialize the GUI
         self.master = tk.Tk()
         # self.textfield_view = TextFieldView(self.master)
@@ -92,6 +94,8 @@ class SeatComfortController:
             img = copy.deepcopy(actual_frame)
         if name != '':
             self._user_recognizer.register_user(name, img)
+            img_pil = Image.fromarray(img)
+            img_pil.save(self._user_faces_dir + "/" + name + ".jpg")
             new_user = User(name,
                             SeatComfortController.AWAKE_POSITION_DEFAULT,
                             SeatComfortController.SLEEPING_POSITION_DEFAULT)
