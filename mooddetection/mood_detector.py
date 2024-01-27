@@ -5,7 +5,7 @@ from threading import Thread
 
 from deepface import DeepFace
 
-from seatcomfortlogic.seat_comfort_controller import shared_frame_lock, actual_frame
+from seatcomfortlogic.seat_comfort_controller import shared_frame_lock, actual_frame, user_lock, logged_user
 
 
 class MoodDetector(Thread):
@@ -33,8 +33,8 @@ class MoodDetector(Thread):
         while True:
             if act_seconds >= self.tot_seconds:
                 return
-            time.sleep(1/self.frequency)
-            act_seconds += (1/self.frequency)
+            time.sleep(1 / self.frequency)
+            act_seconds += (1 / self.frequency)
             # 2) took the actual frame
             with shared_frame_lock:
                 actual_frame_cp = copy.deepcopy(actual_frame)
@@ -44,6 +44,17 @@ class MoodDetector(Thread):
             self.controller.add_log_message(f"mood_detector - - [{datetime.now()}]: {emotion} detected")
             # 5) if the frame is a bad emotion
             if class_emotion == 1:
-                # 5.1) restore the previous position TODO
+                # 5.1) restore the previous position
+                if self.user_state:  # if user_state is True (seat is in sleeping position) restore the awake position
+                    with user_lock:
+                        position = logged_user.get_awake_position()
+                        logged_user.set_mode(False)
+                else:
+                    with user_lock:
+                        position = logged_user.get_sleeping_position()
+                        logged_user.set_mode(True)
+                self.controller.rotate_back_seat(position, True)
                 # 5.2) print in the log that the position is changed
-                self.controller.add_log_message(f"mood_detector - - [{datetime.now()}]: bed emotion detected, previous position restored")
+                self.controller.add_log_message(f"mood_detector - - [{datetime.now()}]: bad emotion detected, "
+                                                f"previous position restored")
+                return
