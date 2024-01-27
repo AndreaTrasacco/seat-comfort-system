@@ -15,13 +15,13 @@ class SeatView():
 
         # create the image related to the back seat
         self.back_seat = self.back_seat.resize((600, 300))
-        self.back_seat_tk = ImageTk.PhotoImage(self.back_seat, master=master)
+        self.back_seat_tk = ImageTk.PhotoImage(self.back_seat)
         self.canvas_back_seat = self.canvas.create_image(15, 350, anchor=tk.SW, image=self.back_seat_tk)
         self.actual_degree = 0
 
         # create the image related to the seat
         self.seat = self.seat.resize((150, 60))
-        self.seat_tk = ImageTk.PhotoImage(self.seat, master=master)
+        self.seat_tk = ImageTk.PhotoImage(self.seat)
         self.canvas.create_image(270, 315, anchor=tk.SW, image=self.seat_tk)
 
         # create the oval, which represent the seat back
@@ -31,8 +31,8 @@ class SeatView():
 
         self.left_arrow_image = Image.open("../gui/img/left_arrow.jpg")
         self.right_arrow_image = Image.open("../gui/img/right_arrow.jpg")
-        self.left_arrow_photo = ImageTk.PhotoImage(self.left_arrow_image, master=master)
-        self.right_arrow_photo = ImageTk.PhotoImage(self.right_arrow_image, master=master)
+        self.left_arrow_photo = ImageTk.PhotoImage(self.left_arrow_image)
+        self.right_arrow_photo = ImageTk.PhotoImage(self.right_arrow_image)
 
         self.left_arrow_label = tk.Label(self.frame, image=self.left_arrow_photo, cursor="hand2")
         self.left_arrow_label.pack(side=tk.LEFT)

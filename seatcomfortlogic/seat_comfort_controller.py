@@ -7,6 +7,7 @@ from PIL import Image
 
 from gui.camera_view import CameraView
 from gui.rigth_side_view import RightSideView
+from gui.textfield_view import TextFieldView
 from imagepicker.image_picker_client import ImagePickerClient
 from seatcomfortlogic.users_storage_controller import UsersStorageController, User
 from userrecognition.user_recognizer import UserRecognizer
@@ -37,7 +38,7 @@ class SeatComfortController:
         self._user_faces_dir = "../data/user_faces_db"
         # initialize the GUI
         self.master = tk.Tk()
-        # self.textfield_view = TextFieldView(self.master)
+        self.textfield_view = TextFieldView(self.master, self)
         self.camera_view = CameraView(self.master)
         self.right_side_view = RightSideView(self.master, self)
 
@@ -46,13 +47,13 @@ class SeatComfortController:
         self._users_storage_controller = UsersStorageController()
         # self._need_detector = EyesDetector()
         # self._user_recognizer = UserRecognizer()
-        self._camera_thread = ImagePickerClient()
-        self._user_recognizer_thread = UserRecognizer(self._users_storage_controller)
+        # self._camera_thread = ImagePickerClient()
+        # self._user_recognizer_thread = UserRecognizer(self._users_storage_controller)
 
     def main(self):
         global stop_flag
-        controller_thread = threading.Thread(target=self.run)
-        controller_thread.start()
+        #controller_thread = threading.Thread(target=self.run)
+        #controller_thread.start()
         self.master.mainloop()
         stop_flag = True  # TODO TESTARE
         self._camera_thread.join()  # TODO FOR ALL THE THREADS
