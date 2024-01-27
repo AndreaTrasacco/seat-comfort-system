@@ -8,12 +8,11 @@ from mooddetection.mood_detector import MoodDetector
 
 
 class EyesDetector(Thread):
-    def __init__(self, frequency, num_cons_frame, controller):
+    def __init__(self, frequency, num_cons_frame):
         super(EyesDetector, self).__init__()
         self.eyes_detection = EyesDetection()
         self.frequency = frequency
         self.num_cons_frame = num_cons_frame
-        self.controller = controller
 
     def run(self):
         """
@@ -48,24 +47,24 @@ class EyesDetector(Thread):
                     with glob.user_lock:
                         position = glob.logged_user.get_sleeping_position()
                         glob.logged_user.set_mode(True)
-                    self.controller.rotate_back_seat(position, True)
+                    glob.controller.rotate_back_seat(position, True)
                     # 4.2) print on the log the message
-                    self.controller.add_log_message(f"eyes_detector - - [{datetime.now()}]: sleeping position set")
+                    glob.controller.add_log_message(f"eyes_detector - - [{datetime.now()}]: sleeping position set")
                 # 5) if for num_consecutive_frame you have detected open eyes
                 else:
                     # 5.1) put the seat in the preferred position for working
                     with glob.user_lock:
                         position = glob.logged_user.get_awake_position()
                         glob.logged_user.set_mode(False)
-                    self.controller.rotate_back_seat(position, True)
+                    glob.controller.rotate_back_seat(position, True)
                     # 5.2) print on the log the message
-                    self.controller.add_log_message(f"eyes_detector - - [{datetime.now()}]: awake position set")
+                    glob.controller.add_log_message(f"eyes_detector - - [{datetime.now()}]: awake position set")
 
                 # 6) start the mood detector thread, that checks if the user liked the changed position
                 #    and eventually restore the previous one
                 with glob.user_lock:
                     actual_state = glob.logged_user.get_mode()
-                mood_detector = MoodDetector(5, 1, self.controller, actual_state)
+                mood_detector = MoodDetector(5, 1, glob.controller, actual_state)
                 mood_detector.start()
                 mood_detector.join()
 

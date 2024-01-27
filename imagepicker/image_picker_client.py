@@ -4,7 +4,9 @@ import time
 from threading import Thread
 
 import numpy as np
+
 import globals as glob
+
 
 class ImagePickerClient(Thread):
     def run(self):
@@ -40,8 +42,8 @@ class ImagePickerClient(Thread):
                 # Reshape the NumPy array to the original image shape
                 image = image_np.reshape((960, 540, 3))
                 with glob.shared_frame_lock:
-                    actual_frame = image
-                    glob.controller.camera_view.update_image(actual_frame)
+                    glob.actual_frame = image
+                    glob.controller.camera_view.update_image(glob.actual_frame)
 
         except KeyboardInterrupt:
             print("Client interrupted by keyboard. Closing connection.")

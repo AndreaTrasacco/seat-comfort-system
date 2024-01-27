@@ -1,10 +1,9 @@
-import math
 import tkinter as tk
 import globals as glob
 from PIL import ImageTk, Image
 
 
-class SeatView():
+class SeatView:
     def __init__(self, master):
         self.master = master
         self.frame = tk.Frame(master, bg="white")

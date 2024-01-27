@@ -12,6 +12,7 @@ from gui.textfield_view import TextFieldView
 from imagepicker.image_picker_client import ImagePickerClient
 from seatcomfortlogic.users_storage_controller import UsersStorageController, User
 from userrecognition.user_recognizer import UserRecognizer
+from eyesdetection.eyes_detector import EyesDetector
 
 
 class SeatComfortController:
@@ -22,23 +23,25 @@ class SeatComfortController:
         self._user_faces_dir = "../data/user_faces_db"
         # initialize the GUI
         self.master = tk.Tk()
-        self.textfield_view = TextFieldView(self.master, self)
+        self.textfield_view = None
+        self.right_side_view = None
         self.camera_view = CameraView(self.master)
-        self.right_side_view = RightSideView(self.master, self)
 
         self.camera_endpoint = "http://169.254.101.5:5000/Raspberry/photo"  # TODO mettere corretto
 
         self._users_storage_controller = UsersStorageController()
-        # self._need_detector = EyesDetector()
+        self._need_detector_thread = EyesDetector(1, 5)
         self._camera_thread = ImagePickerClient()
         self._user_recognizer_thread = UserRecognizer(self._users_storage_controller)
 
     def main(self):
-        global stop_flag
+        self.textfield_view = TextFieldView(self.master)
+        self.right_side_view = RightSideView(self.master)
         controller_thread = threading.Thread(target=self.run)
         controller_thread.start()
         self.master.mainloop()
-        stop_flag = True  # TODO TESTARE
+        glob.stop_flag = True  # TODO TESTARE
+        self._need_detector_thread.join()
         self._camera_thread.join()  # TODO FOR ALL THE THREADS
         if glob.logged_user is not None:
             self._users_storage_controller.save_user(glob.logged_user)
@@ -51,6 +54,7 @@ class SeatComfortController:
         self._user_recognizer_thread.join()  # Wait for the user detection
         self.add_log_message("USER DETECTED : " + glob.logged_user.get_name())
         # TODO Start other threads
+        self._need_detector_thread.start()
         # TODO ATTENZIONE BOTTONI
 
     def signup_button_handler(self):
