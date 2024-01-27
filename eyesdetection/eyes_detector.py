@@ -3,6 +3,7 @@ import copy
 from datetime import datetime
 from threading import Thread
 from eyesdetection.eyes_detection import EyesDetection
+from mooddetection.mood_detector import MoodDetector
 from seatcomfortlogic.seat_comfort_controller import shared_frame_lock, actual_frame, user_lock, logged_user, stop_flag
 
 
@@ -16,7 +17,7 @@ class EyesDetector(Thread):
 
     def run(self):
         """
-        Thread who handles the eyes detector, with a certain frequency look the frame
+        Thread that handles the eyes detector, with a certain frequency look the frame
         and checks for a certain number of frames closed or open eyes are detected
         """
         # 1) while true + sleep(frequency)
@@ -58,6 +59,13 @@ class EyesDetector(Thread):
                     # 5.2) print on the log the message
                     self.controller.add_log_message(f"eyes_detector - - [{datetime.now()}]: awake position set")
                     actual_state = False
+
+                # 6) start the mood detector thread, that checks if the user liked the changed position
+                #    and eventually restore the previous one
+                mood_detector = MoodDetector()
+                mood_detector.start()
+                mood_detector.join()
+
             prev_detection = current_detection
 
     def detect_eyes(self, img):
