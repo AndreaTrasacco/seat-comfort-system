@@ -1,6 +1,7 @@
 import copy
 import os
 import time
+import global_start as glob
 from threading import Thread
 
 from deepface import DeepFace
@@ -23,13 +24,12 @@ class UserRecognizer(Thread):
             return user_name
 
     def run(self):
-        from seatcomfortlogic.seat_comfort_controller import logged_user, shared_frame_lock, actual_frame
-        import seatcomfortlogic.seat_comfort_controller
         while True:
             time.sleep(1 / self._frequency)
-            with shared_frame_lock:
-                img = copy.deepcopy(actual_frame)
+            with glob.shared_frame_lock:
+                img = copy.deepcopy(glob.actual_frame)
             user_name = self.detect_user(img)
+            print("RESULT : " + user_name)
             if user_name is not None:
-                seatcomfortlogic.seat_comfort_controller.logged_user = self._users_storage_ctrl.retrieve_user(user_name)
+                glob.logged_user = self._users_storage_ctrl.retrieve_user(user_name)
                 return

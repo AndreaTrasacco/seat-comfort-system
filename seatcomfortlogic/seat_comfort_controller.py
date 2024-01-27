@@ -2,6 +2,7 @@ import copy
 import threading
 import time
 import tkinter as tk
+import global_start as glob
 
 from PIL import Image
 
@@ -11,24 +12,6 @@ from gui.textfield_view import TextFieldView
 from imagepicker.image_picker_client import ImagePickerClient
 from seatcomfortlogic.users_storage_controller import UsersStorageController, User
 from userrecognition.user_recognizer import UserRecognizer
-
-# lock to ensure mutual exclusion for the access of the frame
-shared_frame_lock = threading.Lock()
-actual_frame = None
-
-# actual logged user
-user_lock = threading.Lock()
-logged_user = None
-
-# lock for the seat position
-seat_position_lock = threading.Lock()
-
-# lock for the log
-log_lock = threading.Lock()
-
-# Flag to stop Threads
-stop_flag: bool = False
-
 
 class SeatComfortController:
     AWAKE_POSITION_DEFAULT = 0  # Position of the back seat when the user is awake
@@ -46,34 +29,33 @@ class SeatComfortController:
 
         self._users_storage_controller = UsersStorageController()
         # self._need_detector = EyesDetector()
-        # self._user_recognizer = UserRecognizer()
-        # self._camera_thread = ImagePickerClient()
-        # self._user_recognizer_thread = UserRecognizer(self._users_storage_controller)
+        self._camera_thread = ImagePickerClient()
+        self._user_recognizer_thread = UserRecognizer(self._users_storage_controller)
 
     def main(self):
         global stop_flag
-        #controller_thread = threading.Thread(target=self.run)
-        #controller_thread.start()
+        controller_thread = threading.Thread(target=self.run)
+        controller_thread.start()
         self.master.mainloop()
         stop_flag = True  # TODO TESTARE
         self._camera_thread.join()  # TODO FOR ALL THE THREADS
-        if logged_user is not None:
-            self._users_storage_controller.save_user(logged_user)
+        if glob.logged_user is not None:
+            self._users_storage_controller.save_user(glob.logged_user)
 
     def run(self):
         # Start thread for capturing frames
         self._camera_thread.start()
-        time.sleep(60)
+        time.sleep(10)
         self._user_recognizer_thread.start()
         self._user_recognizer_thread.join()  # Wait for the user detection
-        self.add_log_message("USER DETECTED : " + logged_user.get_name())
+        self.add_log_message("USER DETECTED : " + glob.logged_user.get_name())
         # TODO Start other threads
         # TODO ATTENZIONE BOTTONI
 
     def signup_button_handler(self):
         name = self.textfield_view.get_text()
-        with shared_frame_lock:
-            img = copy.deepcopy(actual_frame)
+        with glob.shared_frame_lock:
+            img = copy.deepcopy(glob.actual_frame)
         if name != '':
             img_pil = Image.fromarray(img)
             img_pil.save(self._user_faces_dir + "/" + name + ".jpg")
@@ -92,19 +74,16 @@ class SeatComfortController:
         pass
 
     def rotate_back_seat(self, degrees, absolute=False):
-        with seat_position_lock:
+        with glob.seat_position_lock:
             self.right_side_view.get_seat_view().rotate(degrees, absolute)
         # TODO UPDATE USER
 
     def add_log_message(self, message):
-        with log_lock:
+        with glob.log_lock:
             self.right_side_view.get_log_view().add_message(message)
 
-
-controller = SeatComfortController()
-
 if __name__ == '__main__':
-    controller.main()
+    glob.controller.main()
 
 '''
 constant FRAME_FREQUENCY

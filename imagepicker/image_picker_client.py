@@ -4,11 +4,10 @@ import time
 from threading import Thread
 
 import numpy as np
-
+import global_start as glob
 
 class ImagePickerClient(Thread):
     def run(self):
-        from seatcomfortlogic.seat_comfort_controller import controller, stop_flag, shared_frame_lock
         # Server configuration
         host = '169.254.101.5'
         port = 8000
@@ -20,7 +19,7 @@ class ImagePickerClient(Thread):
         client_socket.connect((host, port))
 
         try:
-            while not stop_flag:
+            while not glob.stop_flag:
                 time.sleep(0.05)  # TODO METTERE IN UNA COSTANTE
                 # Send a message to the server
                 message_to_send = {"message": "request_for_photo"}
@@ -40,9 +39,9 @@ class ImagePickerClient(Thread):
                 image_np = np.frombuffer(image_data, dtype=np.uint8)
                 # Reshape the NumPy array to the original image shape
                 image = image_np.reshape((960, 540, 3))
-                with shared_frame_lock:
+                with glob.shared_frame_lock:
                     actual_frame = image
-                    controller.camera_view.update_image(actual_frame)
+                    glob.controller.camera_view.update_image(actual_frame)
 
         except KeyboardInterrupt:
             print("Client interrupted by keyboard. Closing connection.")
