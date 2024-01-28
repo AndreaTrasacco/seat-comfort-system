@@ -51,7 +51,7 @@ class EyesDetector(Thread):
                         glob.logged_user.set_position(position)
                     glob.controller.rotate_back_seat(position, True)
                     # 4.2) print on the log the message
-                    glob.controller.add_log_message(f"NEED DETECTOR - - Sleeping position set")
+                    glob.controller.add_log_message(f"NEED DETECTOR - - SLEEP position set")
                 # 5) if for num_consecutive_frame you have detected open eyes
                 else:
                     # 5.1) put the seat in the preferred position for awakening
@@ -61,7 +61,7 @@ class EyesDetector(Thread):
                         glob.logged_user.set_position(position)
                     glob.controller.rotate_back_seat(position, True)
                     # 5.2) print on the log the message
-                    glob.controller.add_log_message(f"NEED DETECTOR - - Awakening position set")
+                    glob.controller.add_log_message(f"NEED DETECTOR - - AWAKE position set")
 
                 # 6) start the mood detector thread, that checks if the user liked the changed position
                 #    and eventually restore the previous one
@@ -71,7 +71,6 @@ class EyesDetector(Thread):
                 mood_detector.start()
                 mood_detector.join()
             prev_detection = current_detection
-            print("EYES DETECTOR")
 
     def detect_eyes(self, img):
         return self.eyes_detection.classify_eyes(img)

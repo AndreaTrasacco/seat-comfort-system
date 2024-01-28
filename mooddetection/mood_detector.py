@@ -29,9 +29,7 @@ class MoodDetector(Thread):
         """
         # 1) while(tot_sec)
         act_seconds = 0
-        while True:
-            if act_seconds >= self.tot_seconds:
-                return
+        while act_seconds < self.tot_seconds:
             time.sleep(1 / self.frequency)
             act_seconds += (1 / self.frequency)
             # 2) took the actual frame
@@ -55,6 +53,5 @@ class MoodDetector(Thread):
                         glob.logged_user.set_position(position)
                 glob.controller.rotate_back_seat(position, True)
                 # 5.2) print in the log that the position is changed
-                glob.controller.add_log_message(f"MOOD DETECTOR - - Bad emotion detected, "
-                                                f"previous position restored")
+                glob.controller.add_log_message(f"MOOD DETECTOR - - Previous position restored")
                 return

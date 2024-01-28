@@ -13,7 +13,8 @@ class ImagePicker:  # Flask server listening for GET requests for photos (captur
     def __init__(self):
         self._camera = PiCamera()
         time.sleep(2)
-        self._camera.resolution = (540, 960)
+        self._camera.hflip = True
+        self._camera.resolution = (432, 540)
         self._camera.capture("img.jpg", format="jpeg")
 
     def capture_image(self):  # Capture the image and returns it as a numpy array
