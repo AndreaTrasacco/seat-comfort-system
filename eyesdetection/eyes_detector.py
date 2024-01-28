@@ -12,7 +12,7 @@ class EyesDetector(Thread):
         super(EyesDetector, self).__init__()
         self.eyes_detection = EyesDetection()
         self.frequency = frequency
-        self.num_cons_frame = num_cons_frame
+        self.num_cons_frame = num_cons_frame  # Number of consecutive frames to be used for changing class
 
     def run(self):
         """
@@ -67,7 +67,6 @@ class EyesDetector(Thread):
                 mood_detector = MoodDetector(5, 1, glob.controller, actual_state)
                 mood_detector.start()
                 mood_detector.join()
-
             prev_detection = current_detection
 
     def detect_eyes(self, img):

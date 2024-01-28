@@ -54,7 +54,7 @@ class SeatComfortController:
         self._user_recognizer_thread.join()  # Wait for the user detection
         self.add_log_message("USER DETECTED : " + glob.logged_user.get_name())
         # TODO Start other threads
-        self._need_detector_thread.start()
+        self._need_detector_thread.start()  # TODO ATTENZIONE LOGICA MOOD DETECTOR
         # TODO ATTENZIONE BOTTONI
 
     def signup_button_handler(self):

@@ -15,7 +15,6 @@ class UserRecognizer(Thread):
 
     def detect_user(self, img):  # Returns the name of the user if it is registered, None otherwise
         recognition = DeepFace.find(img, db_path=self._user_faces_dir, enforce_detection=False)
-        print("DONE")
         if recognition[0].empty:  # User not recognized
             return None
         else:  # User recognized
@@ -26,7 +25,6 @@ class UserRecognizer(Thread):
 
     def run(self):
         while True:
-            print("HERE")
             time.sleep(1 / self._frequency)
             with glob.shared_frame_lock:
                 img = copy.deepcopy(glob.actual_frame)
