@@ -20,15 +20,15 @@ class User:  # Model class
         self._mode = False # False means awake, True means sleep
 
     def set_position(self, position):
-        if not self._mode:
+        if not self._mode: # if the actual mode is False, set the awake position depending on position argument
             self._awake_position = position
-        else:
+        else: # if the actual mode is True, set the sleep position depending on position argument
             self._sleep_position = position
 
     def update_position_by_delta(self, delta):
-        if not self._mode:
+        if not self._mode: # if the actual mode is False, set the awake position updating it of the delta value
             self._awake_position += delta
-        else:
+        else: # if the actual mode is True, set the sleep position updating it of the delta value
             self._sleep_position += delta
 
     def get_awake_position(self):

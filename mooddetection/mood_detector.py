@@ -42,12 +42,12 @@ class MoodDetector(Thread):
             # 5) if the detected emotion is a bad emotion
             if class_emotion == 1:
                 # 5.1) restore the previous position
-                if self.user_state:  # if user_state is True (seat is in sleeping position) restore the awake position
+                if self.user_state:  # if user_state is True (seat is in sleep position) restore the awake position
                     with glob.user_lock:
                         position = glob.logged_user.get_awake_position()
                         glob.logged_user.set_mode(False)
                         glob.logged_user.set_position(position)
-                else:
+                else: # The user state is False (seat is in awake position) restore the sleep position
                     with glob.user_lock:
                         position = glob.logged_user.get_sleep_position()
                         glob.logged_user.set_mode(True)

@@ -36,9 +36,9 @@ class SeatComfortController:
     def main(self):
         self.textfield_view = TextFieldView(self.master)
         self.right_side_view = RightSideView(self.master)
-        controller_thread = threading.Thread(target=self.run)
+        controller_thread = threading.Thread(target=self.run) # start all the other threads
         controller_thread.start()
-        self.master.mainloop()
+        self.master.mainloop() # start the GUI
         glob.stop_flag = True
         if self._need_detector_thread.is_alive():
             self._need_detector_thread.join()
@@ -53,6 +53,7 @@ class SeatComfortController:
         # Start thread for capturing frames
         self._camera_thread.start()
         time.sleep(10)
+        # start the thread for the user recognition
         self._user_recognizer_thread.start()
         self._user_recognizer_thread.join()  # Wait for the user detection
         if not glob.stop_flag:
@@ -62,11 +63,13 @@ class SeatComfortController:
             self._need_detector_thread.start()
 
     def signup_button_handler(self):
+        # handler for the signup button click
         name = self.textfield_view.get_text()
         with glob.shared_frame_lock:
             img = copy.deepcopy(glob.actual_frame)
         if name != '':
             img_pil = Image.fromarray(img)
+            # save the captured frame, it must be used for the user recognition
             img_pil.save(self._user_faces_dir + "/" + name + ".jpg")
             new_user = User(name,
                             SeatComfortController.AWAKE_POSITION_DEFAULT,
@@ -75,21 +78,23 @@ class SeatComfortController:
             self.change_button_status("signup", False)
 
     def left_arrow_handler(self, event):
+        # handler for the left arrows, must rotate the seat of 10 degrees
         self.rotate_back_seat(10)
         with glob.user_lock:
             glob.logged_user.update_position_by_delta(10)
 
     def right_arrow_handler(self, event):
+        # handler for the right arrows, must rotate the seat of -10 degrees
         self.rotate_back_seat(-10)
         with glob.user_lock:
             glob.logged_user.update_position_by_delta(-10)
 
-    def rotate_back_seat(self, degrees, absolute=False):
-        with glob.seat_position_lock:
+    def rotate_back_seat(self, degrees, absolute=False): # when absolute is True, an absolute value for the degrees is passed
+        with glob.seat_position_lock: # get the lock for changing the seat
             self.right_side_view.get_seat_view().rotate(degrees, absolute)
 
     def add_log_message(self, message):
-        with glob.log_lock:
+        with glob.log_lock: # get the lock for writing in the log text area
             self.right_side_view.get_log_view().add_message(message)
 
     def change_button_status(self, button, status):
@@ -99,6 +104,7 @@ class SeatComfortController:
             self.right_side_view.get_seat_view().change_button(status)
 
     def update_camera(self, img):
+        # update the image on the camera area of the window
         self.camera_view.update_image(img)
 
 
