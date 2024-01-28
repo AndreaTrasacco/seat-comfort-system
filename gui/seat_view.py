@@ -42,6 +42,9 @@ class SeatView:
         self.right_arrow_label.pack(side=tk.RIGHT)
         self.right_arrow_label.bind("<Button-1>", glob.controller.right_arrow_handler)
 
+        self.left_arrow_label.configure(state="disabled")
+        self.right_arrow_label.configure(state="disabled")
+
         self.frame.pack(side=tk.TOP)
 
     def rotate(self, degrees, absolute):
@@ -54,3 +57,11 @@ class SeatView:
         self.canvas.itemconfig(self.canvas_back_seat, image=rotated_image_tk)
         #self.back_seat = rotated_image
         self.back_seat_tk = rotated_image_tk
+
+    def change_button(self, status):
+        if status: # if status is True, able the button
+            self.left_arrow_label.configure(state="normal")
+            self.right_arrow_label.configure(state="normal")
+        else: # if status is False, disable the button
+            self.left_arrow_label.configure(state="disabled")
+            self.right_arrow_label.configure(state="disabled")

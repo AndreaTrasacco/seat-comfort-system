@@ -8,12 +8,11 @@ from deepface import DeepFace
 
 
 class MoodDetector(Thread):
-    def __init__(self, tot_seconds, frequency, controller, user_state):
+    def __init__(self, tot_seconds, frequency, user_state):
         super(MoodDetector, self).__init__()
-        self._bad_emotions = ["angry", "disgust"]
+        self._bad_emotions = ["angry", "disgust", "sad", "fear"]
         self.tot_seconds = tot_seconds
         self.frequency = frequency
-        self.controller = controller
         self.user_state = user_state
 
     def get_mood(self, img):  # It returns 1 if the detected emotion was "bad", 0 otherwise
@@ -41,7 +40,7 @@ class MoodDetector(Thread):
             # 3) classify the frame
             emotion, class_emotion = self.get_mood(actual_frame_cp)
             # 4) print in the log the emotion detected
-            self.controller.add_log_message(f"mood_detector - - [{datetime.now()}]: {emotion} detected")
+            glob.controller.add_log_message(f"mood_detector: {emotion} detected")
             # 5) if the frame is a bad emotion
             if class_emotion == 1:
                 # 5.1) restore the previous position
@@ -53,8 +52,9 @@ class MoodDetector(Thread):
                     with glob.user_lock:
                         position = glob.logged_user.get_sleeping_position()
                         glob.logged_user.set_mode(True)
-                self.controller.rotate_back_seat(position, True)
+                        glob.logged_user.set_position(position)
+                glob.controller.rotate_back_seat(position, True)
                 # 5.2) print in the log that the position is changed
-                self.controller.add_log_message(f"mood_detector - - [{datetime.now()}]: bad emotion detected, "
+                glob.controller.add_log_message(f"mood_detector: bad emotion detected, "
                                                 f"previous position restored")
                 return

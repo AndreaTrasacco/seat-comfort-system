@@ -27,8 +27,6 @@ class SeatComfortController:
         self.right_side_view = None
         self.camera_view = CameraView(self.master)
 
-        self.camera_endpoint = "http://169.254.101.5:5000/Raspberry/photo"  # TODO mettere corretto
-
         self._users_storage_controller = UsersStorageController()
         self._need_detector_thread = EyesDetector(1, 5)
         self._camera_thread = ImagePickerClient()
@@ -52,10 +50,9 @@ class SeatComfortController:
         time.sleep(10)
         self._user_recognizer_thread.start()
         self._user_recognizer_thread.join()  # Wait for the user detection
-        self.add_log_message("USER DETECTED : " + glob.logged_user.get_name())
-        # TODO Start other threads
-        self._need_detector_thread.start()  # TODO ATTENZIONE LOGICA MOOD DETECTOR
-        # TODO ATTENZIONE BOTTONI
+        self.change_button_status("arrows", True)
+        self.add_log_message(f"seat_comfort_controller: user detected: " + glob.logged_user.get_name())
+        self._need_detector_thread.start()
 
     def signup_button_handler(self):
         name = self.textfield_view.get_text()
@@ -68,24 +65,33 @@ class SeatComfortController:
                             SeatComfortController.AWAKE_POSITION_DEFAULT,
                             SeatComfortController.SLEEPING_POSITION_DEFAULT)
             self._users_storage_controller.save_user(new_user)
-            # TODO ATTENZIONE BOTTONI
+            self.change_button_status("signup", False)
 
     def left_arrow_handler(self, event):
         self.rotate_back_seat(10)
+        with glob.user_lock:
+            glob.logged_user.update_position_by_delta(10)
         pass
 
     def right_arrow_handler(self, event):
         self.rotate_back_seat(-10)
+        with glob.user_lock:
+            glob.logged_user.update_position_by_delta(-10)
         pass
 
     def rotate_back_seat(self, degrees, absolute=False):
         with glob.seat_position_lock:
             self.right_side_view.get_seat_view().rotate(degrees, absolute)
-        # TODO UPDATE USER
 
     def add_log_message(self, message):
         with glob.log_lock:
             self.right_side_view.get_log_view().add_message(message)
+
+    def change_button_status(self, button, status):
+        if button == "signup":
+            self.right_side_view.get_seat_view().change_button(status)
+        elif button == "arrows":
+            self.textfield_view.change_button(status)
 
 
 if __name__ == '__main__':

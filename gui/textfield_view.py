@@ -15,3 +15,9 @@ class TextFieldView():
 
     def get_text(self):
         return self.entry.get()
+
+    def change_button(self, status):
+        if status: # if status is True, able the button
+            self.button.configure(state="normal")
+        else: # if status is False, disable the button
+            self.button.configure(state="disabled")
