@@ -50,6 +50,7 @@ class SeatComfortController:
         time.sleep(10)
         self._user_recognizer_thread.start()
         self._user_recognizer_thread.join()  # Wait for the user detection
+        self.change_button_status("signup", False)
         self.change_button_status("arrows", True)
         self.add_log_message(f"seat_comfort_controller: user detected: " + glob.logged_user.get_name())
         self._need_detector_thread.start()
@@ -71,13 +72,11 @@ class SeatComfortController:
         self.rotate_back_seat(10)
         with glob.user_lock:
             glob.logged_user.update_position_by_delta(10)
-        pass
 
     def right_arrow_handler(self, event):
         self.rotate_back_seat(-10)
         with glob.user_lock:
             glob.logged_user.update_position_by_delta(-10)
-        pass
 
     def rotate_back_seat(self, degrees, absolute=False):
         with glob.seat_position_lock:
@@ -89,9 +88,9 @@ class SeatComfortController:
 
     def change_button_status(self, button, status):
         if button == "signup":
-            self.right_side_view.get_seat_view().change_button(status)
-        elif button == "arrows":
             self.textfield_view.change_button(status)
+        elif button == "arrows":
+            self.right_side_view.get_seat_view().change_button(status)
 
 
 if __name__ == '__main__':

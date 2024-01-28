@@ -1,6 +1,8 @@
 import tkinter as tk
-import globals as glob
+
 from PIL import ImageTk, Image
+
+import globals as glob
 
 
 class SeatView:
@@ -36,11 +38,9 @@ class SeatView:
 
         self.left_arrow_label = tk.Label(self.frame, image=self.left_arrow_photo, cursor="hand2")
         self.left_arrow_label.pack(side=tk.LEFT)
-        self.left_arrow_label.bind("<Button-1>", glob.controller.left_arrow_handler)
 
         self.right_arrow_label = tk.Label(self.frame, image=self.right_arrow_photo, cursor="hand2")
         self.right_arrow_label.pack(side=tk.RIGHT)
-        self.right_arrow_label.bind("<Button-1>", glob.controller.right_arrow_handler)
 
         self.left_arrow_label.configure(state="disabled")
         self.right_arrow_label.configure(state="disabled")
@@ -52,16 +52,21 @@ class SeatView:
             self.actual_degree += degrees
         else:
             self.actual_degree = degrees
-        rotated_image = self.back_seat.rotate(self.actual_degree, resample=Image.BICUBIC, center=((self.back_seat.width // 2) - 27, self.back_seat.height - 72))
+        rotated_image = self.back_seat.rotate(self.actual_degree, resample=Image.BICUBIC,
+                                              center=((self.back_seat.width // 2) - 27, self.back_seat.height - 72))
         rotated_image_tk = ImageTk.PhotoImage(rotated_image)
         self.canvas.itemconfig(self.canvas_back_seat, image=rotated_image_tk)
-        #self.back_seat = rotated_image
+        # self.back_seat = rotated_image
         self.back_seat_tk = rotated_image_tk
 
     def change_button(self, status):
-        if status: # if status is True, able the button
+        if status:  # if status is True, able the button
             self.left_arrow_label.configure(state="normal")
+            self.left_arrow_label.bind("<Button-1>", glob.controller.left_arrow_handler)
             self.right_arrow_label.configure(state="normal")
-        else: # if status is False, disable the button
+            self.right_arrow_label.bind("<Button-1>", glob.controller.right_arrow_handler)
+        else:  # if status is False, disable the button
             self.left_arrow_label.configure(state="disabled")
+            self.left_arrow_label.unbind("<Button-1>")
             self.right_arrow_label.configure(state="disabled")
+            self.right_arrow_label.unbind("<Button-1>")

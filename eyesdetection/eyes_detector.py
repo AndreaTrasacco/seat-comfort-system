@@ -29,7 +29,9 @@ class EyesDetector(Thread):
                 actual_frame_cp = copy.deepcopy(glob.actual_frame)
             # 3) classify the frame
             current_detection = self.detect_eyes(actual_frame_cp)
-
+            if current_detection == -1:  # No faces in front of the camera
+                act_cons_frame = 1
+                continue
             # increment the number of actual consecutive frame only if the actual detection
             # is different from the previous state and the detection is equal to the previous
             with glob.user_lock:
@@ -42,7 +44,7 @@ class EyesDetector(Thread):
             if act_cons_frame >= self.num_cons_frame:
                 act_cons_frame = 1
                 # 4) if for num_consecutive_frame you have detected closed eyes
-                if current_detection:
+                if current_detection == 1:
                     # 4.1) put the seat in the preferred position for sleeping
                     with glob.user_lock:
                         position = glob.logged_user.get_sleeping_position()
@@ -70,6 +72,7 @@ class EyesDetector(Thread):
                 mood_detector.start()
                 mood_detector.join()
             prev_detection = current_detection
+            print("EYES DETECTOR")
 
     def detect_eyes(self, img):
         return self.eyes_detection.classify_eyes(img)

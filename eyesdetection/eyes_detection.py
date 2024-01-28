@@ -313,18 +313,16 @@ class EyesDetection:
             rd = rd.reshape(-1, 1, 11, 1)
             ra = ra.reshape(-1, 1, 11, 1)
 
-            left_prediction = self.model.predict([l_i, lkp, ld, la])[0]
-            right_prediction = self.model.predict([r_i, rkp, rd, ra])[0]
+            left_prediction = self.model.predict([l_i, lkp, ld, la], verbose=0)[0]
+            right_prediction = self.model.predict([r_i, rkp, rd, ra], verbose=0)[0]
 
             left_arg_max = np.argmax(left_prediction)
             right_arg_max = np.argmax(right_prediction)
 
-            # Both eyes are closed
-            if left_arg_max == 0 & right_arg_max == 0:
-                return True
-            # both eyes are open
-            else:
-                return False
+            if left_arg_max == 0 and right_arg_max == 0:  # Both eyes are closed
+                return 1
+            else:  # Both eyes are opened
+                return 0
 
             # if left_arg_max ==0:
             #    left_text = "Left eye Closed"
@@ -339,3 +337,4 @@ class EyesDetection:
         # cv2.imshow("Image",img)
         # cv2.waitKey(0)
         # cv2.destroyAllWindows()
+        return -1

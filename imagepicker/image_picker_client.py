@@ -22,7 +22,7 @@ class ImagePickerClient(Thread):
 
         try:
             while not glob.stop_flag:
-                time.sleep(0.05)  # TODO METTERE IN UNA COSTANTE
+                time.sleep(0.01)  # TODO METTERE IN UNA COSTANTE
                 # Send a message to the server
                 message_to_send = {"message": "request_for_photo"}
                 client_socket.send(json.dumps(message_to_send).encode())
@@ -43,8 +43,11 @@ class ImagePickerClient(Thread):
                 image = image_np.reshape((960, 540, 3))
                 with glob.shared_frame_lock:
                     glob.actual_frame = image
-                    glob.controller.camera_view.update_image(glob.actual_frame)
+                    glob.controller.camera_view.update_image(glob.actual_frame)  # TODO METTERE IN CONTROLLER
+                print("IMAGE PICKER")
 
         except KeyboardInterrupt:
             print("Client interrupted by keyboard. Closing connection.")
             client_socket.close()
+
+# TODO GESTIRE CASO IN CUI L'UTENTE CLICCA X
