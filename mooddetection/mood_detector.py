@@ -48,7 +48,7 @@ class MoodDetector(Thread):
                         glob.logged_user.set_mode(False)
                 else:
                     with glob.user_lock:
-                        position = glob.logged_user.get_sleeping_position()
+                        position = glob.logged_user.get_sleep_position()
                         glob.logged_user.set_mode(True)
                         glob.logged_user.set_position(position)
                 glob.controller.rotate_back_seat(position, True)
