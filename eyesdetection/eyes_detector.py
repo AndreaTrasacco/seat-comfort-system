@@ -46,9 +46,8 @@ class EyesDetector(Thread):
                 if current_detection == 1:
                     # 4.1) put the seat in the preferred position for sleeping
                     with glob.user_lock:
-                        position = glob.logged_user.get_sleep_position()
                         glob.logged_user.set_mode(True)
-                        glob.logged_user.set_position(position)
+                        position = glob.logged_user.get_position()
                     glob.controller.rotate_back_seat(position, True)
                     # 4.2) print on the log the message
                     glob.controller.add_log_message(f"NEED DETECTOR - - SLEEP position set")
@@ -56,9 +55,8 @@ class EyesDetector(Thread):
                 else:
                     # 5.1) put the seat in the preferred position for awakening
                     with glob.user_lock:
-                        position = glob.logged_user.get_awake_position()
                         glob.logged_user.set_mode(False)
-                        glob.logged_user.set_position(position)
+                        position = glob.logged_user.get_position()
                     glob.controller.rotate_back_seat(position, True)
                     # 5.2) print on the log the message
                     glob.controller.add_log_message(f"NEED DETECTOR - - AWAKE position set")

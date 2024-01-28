@@ -35,4 +35,6 @@ class UserRecognizer(Thread):
             user_name = self.detect_user(img)
             if user_name is not None:
                 glob.logged_user = self._users_storage_ctrl.retrieve_user(user_name)
+                glob.logged_user.set_mode(False)
+                glob.controller.rotate_back_seat(glob.logged_user.get_position())
                 return

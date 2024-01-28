@@ -36,9 +36,9 @@ class SeatComfortController:
     def main(self):
         self.textfield_view = TextFieldView(self.master)
         self.right_side_view = RightSideView(self.master)
-        controller_thread = threading.Thread(target=self.run) # start all the other threads
+        controller_thread = threading.Thread(target=self.run)  # start all the other threads
         controller_thread.start()
-        self.master.mainloop() # start the GUI
+        self.master.mainloop()  # start the GUI
         glob.stop_flag = True
         if self._need_detector_thread.is_alive():
             self._need_detector_thread.join()
@@ -59,7 +59,7 @@ class SeatComfortController:
         if not glob.stop_flag:
             self.change_button_status("signup", False)
             self.change_button_status("arrows", True)
-            self.add_log_message(f"SEAT COMFORT SYSTEM - - User detected: " + glob.logged_user.get_name())
+            self.add_log_message(f"SEAT COMFORT SYSTEM - - User detected: " + glob.logged_user.get_name() + " (AWAKE)")
             self._need_detector_thread.start()
 
     def signup_button_handler(self):
@@ -89,12 +89,13 @@ class SeatComfortController:
         with glob.user_lock:
             glob.logged_user.update_position_by_delta(-10)
 
-    def rotate_back_seat(self, degrees, absolute=False): # when absolute is True, an absolute value for the degrees is passed
-        with glob.seat_position_lock: # get the lock for changing the seat
+    def rotate_back_seat(self, degrees,
+                         absolute=False):  # when absolute is True, an absolute value for the degrees is passed
+        with glob.seat_position_lock:  # get the lock for changing the seat
             self.right_side_view.get_seat_view().rotate(degrees, absolute)
 
     def add_log_message(self, message):
-        with glob.log_lock: # get the lock for writing in the log text area
+        with glob.log_lock:  # get the lock for writing in the log text area
             self.right_side_view.get_log_view().add_message(message)
 
     def change_button_status(self, button, status):

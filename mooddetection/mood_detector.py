@@ -1,7 +1,6 @@
 import copy
 import time
 import globals as glob
-from datetime import datetime
 from threading import Thread
 
 from deepface import DeepFace
@@ -44,15 +43,15 @@ class MoodDetector(Thread):
                 # 5.1) restore the previous position
                 if self.user_state:  # if user_state is True (seat is in sleep position) restore the awake position
                     with glob.user_lock:
-                        position = glob.logged_user.get_awake_position()
                         glob.logged_user.set_mode(False)
-                        glob.logged_user.set_position(position)
-                else: # The user state is False (seat is in awake position) restore the sleep position
+                        position = glob.logged_user.get_position()
+                        mode = "AWAKE"
+                else:  # The user state is False (seat is in awake position) restore the sleep position
                     with glob.user_lock:
-                        position = glob.logged_user.get_sleep_position()
                         glob.logged_user.set_mode(True)
-                        glob.logged_user.set_position(position)
+                        position = glob.logged_user.get_position()
+                        mode = "SLEEP"
                 glob.controller.rotate_back_seat(position, True)
                 # 5.2) print in the log that the position is changed
-                glob.controller.add_log_message(f"MOOD DETECTOR - - Previous position restored")
+                glob.controller.add_log_message(f"MOOD DETECTOR - - Previous position restored (" + mode + ")")
                 return
