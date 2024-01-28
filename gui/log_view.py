@@ -6,7 +6,7 @@ class LogView():
         self.frame = tk.Frame(master)
         self.log_text = tk.Text(self.frame, height=10, width=70)
         self.scrollbar = tk.Scrollbar(self.frame, command=self.log_text.yview)
-        self.log_text.config(yscrollcommand=self.scrollbar.set, state='disabled')
+        self.log_text.config(yscrollcommand=self.scrollbar.set, state='disabled', font=("Helvetica", 10))
 
         self.frame.pack(side=tk.BOTTOM, padx=10, pady=20)
         self.log_text.pack(side=tk.LEFT)
