@@ -40,8 +40,10 @@ class SeatComfortController:
         controller_thread.start()
         self.master.mainloop()
         glob.stop_flag = True
-        self._need_detector_thread.join()
-        self._camera_thread.join()
+        if self._need_detector_thread.isAlive():
+            self._need_detector_thread.join()
+        if self._user_recognizer_thread.isAlive():
+            self._camera_thread.join()
         if glob.logged_user is not None:
             self._users_storage_controller.save_user(glob.logged_user)
 
@@ -53,7 +55,7 @@ class SeatComfortController:
         self._user_recognizer_thread.join()  # Wait for the user detection
         self.change_button_status("signup", False)
         self.change_button_status("arrows", True)
-        self.add_log_message(f"seat_comfort_controller: user detected: " + glob.logged_user.get_name())
+        self.add_log_message(f"SEAT COMFORT SYSTEM - - User detected: " + glob.logged_user.get_name())
         self._need_detector_thread.start()
 
     def signup_button_handler(self):

@@ -40,7 +40,7 @@ class MoodDetector(Thread):
             # 3) classify the frame
             emotion, class_emotion = self.get_mood(actual_frame_cp)
             # 4) print in the log the emotion detected
-            glob.controller.add_log_message(f"mood_detector: {emotion} detected")
+            glob.controller.add_log_message(f"MOOD DETECTOR - - {emotion} detected")
             # 5) if the frame is a bad emotion
             if class_emotion == 1:
                 # 5.1) restore the previous position
@@ -55,6 +55,6 @@ class MoodDetector(Thread):
                         glob.logged_user.set_position(position)
                 glob.controller.rotate_back_seat(position, True)
                 # 5.2) print in the log that the position is changed
-                glob.controller.add_log_message(f"mood_detector: bad emotion detected, "
+                glob.controller.add_log_message(f"MOOD DETECTOR - - Bad emotion detected, "
                                                 f"previous position restored")
                 return
