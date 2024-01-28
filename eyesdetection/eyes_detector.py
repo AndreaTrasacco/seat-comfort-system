@@ -55,7 +55,7 @@ class EyesDetector(Thread):
                     glob.controller.add_log_message(f"eyes_detector: sleeping position set")
                 # 5) if for num_consecutive_frame you have detected open eyes
                 else:
-                    # 5.1) put the seat in the preferred position for working
+                    # 5.1) put the seat in the preferred position for awakening
                     with glob.user_lock:
                         position = glob.logged_user.get_awake_position()
                         glob.logged_user.set_mode(False)

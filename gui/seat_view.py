@@ -48,7 +48,7 @@ class SeatView:
         self.frame.pack(side=tk.TOP)
 
     def rotate(self, degrees, absolute):
-        if absolute == False:
+        if not absolute:
             self.actual_degree += degrees
         else:
             self.actual_degree = degrees
