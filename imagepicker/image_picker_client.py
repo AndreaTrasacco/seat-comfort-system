@@ -26,8 +26,8 @@ class ImagePickerClient(Thread):
                 client_socket.send(json.dumps(message_to_send).encode())
                 # Receive the actual image data
                 image_data = b''
-                while len(image_data) < 1555200:
-                    data = client_socket.recv(1555200 - len(image_data))
+                while len(image_data) < 699840:
+                    data = client_socket.recv(699840 - len(image_data))
                     if not data:
                         break  # Connection closed
                     image_data += data
@@ -35,7 +35,7 @@ class ImagePickerClient(Thread):
                 # Convert the received data to a numpy array
                 image_np = np.frombuffer(image_data, dtype=np.uint8)
                 # Reshape the NumPy array to the original image shape
-                image = image_np.reshape((1920, 1080, 3))
+                image = image_np.reshape((540, 432, 3))
                 with glob.shared_frame_lock:
                     glob.actual_frame = image
                     if not glob.stop_flag:

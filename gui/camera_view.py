@@ -11,7 +11,7 @@ class CameraView:
         self.frame.pack(side=tk.LEFT)
         self.image_label.pack()
 
-        self.update_image(np.empty(shape=(960, 540, 3)))
+        self.update_image(np.empty(shape=(576, 432, 3)))
 
     def update_image(self, img):
         image = Image.fromarray(img.astype("uint8"))

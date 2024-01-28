@@ -28,7 +28,7 @@ class UserRecognizer(Thread):
             return None
 
     def run(self):
-        while True:
+        while not glob.stop_flag:
             time.sleep(1 / self._frequency)
             with glob.shared_frame_lock:
                 img = copy.deepcopy(glob.actual_frame)
