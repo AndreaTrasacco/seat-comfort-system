@@ -10,13 +10,13 @@ class EyesDetector(Thread):
     def __init__(self, frequency, num_cons_frame):
         super(EyesDetector, self).__init__()
         self.eyes_detection = EyesDetection()
-        self.frequency = frequency
+        self.frequency = frequency # frequency of the detection
         self.num_cons_frame = num_cons_frame  # Number of consecutive frames to be used for changing class
 
     def run(self):
         """
-        Thread that handles the eyes detector, with a certain frequency look the frame
-        and checks for a certain number of frames closed or open eyes are detected
+        Thread that handles the eyes detector, with a certain frequency looks the frame
+        and checks if for a certain number of frames closed or open eyes are detected
         """
         # 1) while true + sleep(frequency)
         act_cons_frame = 1
@@ -31,10 +31,10 @@ class EyesDetector(Thread):
             if current_detection == -1:  # No faces in front of the camera
                 act_cons_frame = 1
                 continue
-            # increment the number of actual consecutive frame only if the actual detection
-            # is different from the previous state and the detection is equal to the previous
             with glob.user_lock:
                 actual_state = glob.logged_user.get_mode()
+            # increment the number of actual consecutive frame only if the actual detection
+            # is different from the actual state and the detection is equal to the previous one
             if actual_state != current_detection and prev_detection == current_detection:
                 act_cons_frame += 1
             else:
@@ -63,8 +63,8 @@ class EyesDetector(Thread):
                     # 5.2) print on the log the message
                     glob.controller.add_log_message(f"NEED DETECTOR - - AWAKE position set")
 
-                # 6) start the mood detector thread, that checks if the user liked the changed position
-                #    and eventually restore the previous one
+                # 6) start the mood detector thread, that checks if the user doesn't like
+                #    the changed position and eventually restore the previous one
                 with glob.user_lock:
                     actual_state = glob.logged_user.get_mode()
                 mood_detector = MoodDetector(5, 1, actual_state)

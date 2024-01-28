@@ -39,13 +39,14 @@ class MoodDetector(Thread):
             emotion, class_emotion = self.get_mood(actual_frame_cp)
             # 4) print in the log the emotion detected
             glob.controller.add_log_message(f"MOOD DETECTOR - - {emotion} detected")
-            # 5) if the frame is a bad emotion
+            # 5) if the detected emotion is a bad emotion
             if class_emotion == 1:
                 # 5.1) restore the previous position
                 if self.user_state:  # if user_state is True (seat is in sleeping position) restore the awake position
                     with glob.user_lock:
                         position = glob.logged_user.get_awake_position()
                         glob.logged_user.set_mode(False)
+                        glob.logged_user.set_position(position)
                 else:
                     with glob.user_lock:
                         position = glob.logged_user.get_sleep_position()

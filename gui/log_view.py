@@ -1,6 +1,7 @@
 import tkinter as tk
 
-class LogView():
+
+class LogView:
     def __init__(self, master):
         self.master = master
         self.frame = tk.Frame(master)
@@ -13,6 +14,9 @@ class LogView():
         self.scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
 
     def add_message(self, message):
+        """
+        Method used to add a new message in the log text field
+        """
         self.log_text.configure(state='normal')
         self.log_text.insert(tk.END, message + "\n")
         self.log_text.yview(tk.END)

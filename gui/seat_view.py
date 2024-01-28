@@ -27,11 +27,7 @@ class SeatView:
         self.seat_tk = ImageTk.PhotoImage(self.seat)
         self.canvas.create_image(270, 315, anchor=tk.SW, image=self.seat_tk)
 
-        # create the oval, which represent the seat back
-        # x1, y1 = 170, 130
-        # x2, y2 = 220, 270
-        # self.oval = self.canvas.create_oval(x1, y1, x2, y2, outline="black", stipple="gray12")
-
+        # create the two arrows used to move the seat
         self.left_arrow_image = Image.open("../gui/img/left_arrow.jpg")
         self.right_arrow_image = Image.open("../gui/img/right_arrow.jpg")
         self.left_arrow_photo = ImageTk.PhotoImage(self.left_arrow_image)
@@ -49,9 +45,9 @@ class SeatView:
         self.frame.pack(side=tk.TOP)
 
     def rotate(self, degrees, absolute):
-        if not absolute:
+        if not absolute: # relative degrees
             self.actual_degree += degrees
-        else:
+        else: # absolute degree (progressive change of the seat, 10 degrees at a time)
             direction = 1
             if self.actual_degree < degrees:
                 min = self.actual_degree
@@ -67,16 +63,15 @@ class SeatView:
                                               center=((self.back_seat.width // 2) - 27, self.back_seat.height - 72))
         rotated_image_tk = ImageTk.PhotoImage(rotated_image)
         self.canvas.itemconfig(self.canvas_back_seat, image=rotated_image_tk)
-        # self.back_seat = rotated_image
         self.back_seat_tk = rotated_image_tk
 
     def change_button(self, status):
-        if status:  # if status is True, able the button
+        if status:  # if status is True, able the clickable arrows
             self.left_arrow_label.configure(state="normal")
             self.left_arrow_label.bind("<Button-1>", glob.controller.left_arrow_handler)
             self.right_arrow_label.configure(state="normal")
             self.right_arrow_label.bind("<Button-1>", glob.controller.right_arrow_handler)
-        else:  # if status is False, disable the button
+        else:  # if status is False, disable the clickable arrows
             self.left_arrow_label.configure(state="disabled")
             self.left_arrow_label.unbind("<Button-1>")
             self.right_arrow_label.configure(state="disabled")

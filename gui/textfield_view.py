@@ -18,7 +18,7 @@ class TextFieldView:
         return self.entry.get()
 
     def change_button(self, status):
-        if status:  # if status is True, able the button
+        if status:  # if status is True, able the signup button
             self.button.configure(state="normal")
-        else:  # if status is False, disable the button
+        else:  # if status is False, disable the singup button
             self.button.configure(state="disabled")
