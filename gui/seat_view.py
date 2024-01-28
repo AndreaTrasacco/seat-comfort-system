@@ -1,3 +1,4 @@
+import time
 import tkinter as tk
 
 from PIL import ImageTk, Image
@@ -51,7 +52,17 @@ class SeatView:
         if not absolute:
             self.actual_degree += degrees
         else:
-            self.actual_degree = degrees
+            direction = 1
+            if self.actual_degree < degrees:
+                min = self.actual_degree
+                max = degrees
+            elif self.actual_degree > degrees:
+                max = self.actual_degree
+                min = degrees
+                direction = -1
+            for i in range(min, max, 10):
+                self.rotate(10 * direction, False)
+                time.sleep(0.5)
         rotated_image = self.back_seat.rotate(self.actual_degree, resample=Image.BICUBIC,
                                               center=((self.back_seat.width // 2) - 27, self.back_seat.height - 72))
         rotated_image_tk = ImageTk.PhotoImage(rotated_image)

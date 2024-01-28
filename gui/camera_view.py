@@ -14,7 +14,6 @@ class CameraView:
         self.update_image(np.empty(shape=(960, 540, 3)))
 
     def update_image(self, img):
-        # image = Image.open(img)
         image = Image.fromarray(img.astype("uint8"))
         photo = ImageTk.PhotoImage(image)
         self.image_label.configure(image=photo)

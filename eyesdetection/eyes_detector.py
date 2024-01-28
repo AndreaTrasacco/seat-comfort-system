@@ -1,7 +1,6 @@
 import time
 import copy
 import globals as glob
-from datetime import datetime
 from threading import Thread
 from eyesdetection.eyes_detection import EyesDetection
 from mooddetection.mood_detector import MoodDetector

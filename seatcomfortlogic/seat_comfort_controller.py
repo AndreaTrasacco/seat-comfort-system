@@ -2,17 +2,17 @@ import copy
 import threading
 import time
 import tkinter as tk
-import globals as glob
 
 from PIL import Image
 
+import globals as glob
+from eyesdetection.eyes_detector import EyesDetector
 from gui.camera_view import CameraView
 from gui.rigth_side_view import RightSideView
 from gui.textfield_view import TextFieldView
 from imagepicker.image_picker_client import ImagePickerClient
 from seatcomfortlogic.users_storage_controller import UsersStorageController, User
 from userrecognition.user_recognizer import UserRecognizer
-from eyesdetection.eyes_detector import EyesDetector
 
 
 class SeatComfortController:
@@ -23,6 +23,7 @@ class SeatComfortController:
         self._user_faces_dir = "../data/user_faces_db"
         # initialize the GUI
         self.master = tk.Tk()
+        self.master.wm_title("Seat Comfort System")
         self.textfield_view = None
         self.right_side_view = None
         self.camera_view = CameraView(self.master)
@@ -38,9 +39,9 @@ class SeatComfortController:
         controller_thread = threading.Thread(target=self.run)
         controller_thread.start()
         self.master.mainloop()
-        glob.stop_flag = True  # TODO TESTARE
+        glob.stop_flag = True
         self._need_detector_thread.join()
-        self._camera_thread.join()  # TODO FOR ALL THE THREADS
+        self._camera_thread.join()
         if glob.logged_user is not None:
             self._users_storage_controller.save_user(glob.logged_user)
 
@@ -92,28 +93,9 @@ class SeatComfortController:
         elif button == "arrows":
             self.right_side_view.get_seat_view().change_button(status)
 
+    def update_camera(self, img):
+        self.camera_view.update_image(img)
+
 
 if __name__ == '__main__':
     glob.controller.main()
-
-'''
-constant FRAME_FREQUENCY
---> PRINT EVERYTHING ON THE LOG TEXTAREA
-Logic:
-    1)  User Recognition: 
-        [Whenever the new user clicks "Signup" button a frame is captured and the user is stored]
-        Until user is not recognized
-            Each frame is used as input to user recognition module
-        Change the position of the seat to the preferred one for the user when he/she is awake
-        Disable signup button
-    2)  Need Detection:
-        Until a *different* need is not detected (N consecutive frames of the same class)
-            Each frame is used as input to eyes detection
-        Change the position of the seat to the preferred one for the user (depending on the detected class)
-    3)  Mood Detection:
-        For M consecutive frames AFTER NEED DETECTION:
-            If a "bad" emotion is detected 
-                Restore the position
-                Break
-    Whenever the user changes the seat position manually --> store the new preferred position
-'''

@@ -1,8 +1,9 @@
 import tkinter as tk
+
 import globals as glob
 
 
-class TextFieldView():
+class TextFieldView:
     def __init__(self, master):
         self.master = master
         self.frame = tk.Frame(master)
@@ -17,7 +18,7 @@ class TextFieldView():
         return self.entry.get()
 
     def change_button(self, status):
-        if status: # if status is True, able the button
+        if status:  # if status is True, able the button
             self.button.configure(state="normal")
-        else: # if status is False, disable the button
+        else:  # if status is False, disable the button
             self.button.configure(state="disabled")

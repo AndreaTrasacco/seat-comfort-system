@@ -1,3 +1,5 @@
+#  Code taken from 'https://github.com/ymitiku/EyeStateDetection' and slightly adjusted
+
 import os
 
 import cv2
@@ -290,10 +292,6 @@ class EyesDetection:
             l_i, lkp, ld, la = self.get_left_eye_attributes(face_img, self.predictor, (24, 24, 1))
             r_i, rkp, rd, ra = self.get_right_eye_attributes(face_img, self.predictor, (24, 24, 1))
 
-            # cv2.imshow("Left eye: ",l_i)
-            # for kp in lkp:
-            #     cv2.circle(l_i,(kp[0],kp[1]),1,(255,255,0))
-            # cv2.imshow("Right eye: ",r_i)
             l_i = l_i.reshape(-1, 24, 24, 1).astype(np.float32) / 255
             r_i = r_i.reshape(-1, 24, 24, 1).astype(np.float32) / 255
 
@@ -323,18 +321,4 @@ class EyesDetection:
                 return 1
             else:  # Both eyes are opened
                 return 0
-
-            # if left_arg_max ==0:
-            #    left_text = "Left eye Closed"
-            # else:
-            #    left_text = "Left eye Opened"
-            # if right_arg_max ==0:
-            #    right_text = "Right eye Closed"
-            # else:
-            #    right_text = "Right eye Opened"
-            # cv2.putText(img,left_text,(face.left()+10,face.top()+10), cv2.FONT_HERSHEY_DUPLEX, 0.4,color=(0,0,255),thickness=1)
-            # cv2.putText(img,right_text,(face.left()+10,face.top()+30), cv2.FONT_HERSHEY_DUPLEX, 0.4,color=(0,0,255),thickness=1)
-        # cv2.imshow("Image",img)
-        # cv2.waitKey(0)
-        # cv2.destroyAllWindows()
         return -1
