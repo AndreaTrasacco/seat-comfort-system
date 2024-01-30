@@ -6,26 +6,17 @@ from threading import Thread
 from deepface import DeepFace
 
 
-class MoodDetector(Thread):
-    def __init__(self, tot_seconds, frequency, user_state):
-        super(MoodDetector, self).__init__()
-        self._bad_emotions = ["angry", "disgust", "sad", "fear"]
-        self.tot_seconds = tot_seconds
-        self.frequency = frequency
-        self.user_state = user_state
+class MoodDetectorServer:
 
     def get_mood(self, img):  # It returns 1 if the detected emotion was "bad", 0 otherwise
         detection = DeepFace.analyze(img, actions=["emotion"], enforce_detection=False)
         emotion = detection[0]['dominant_emotion']
-        if emotion in self._bad_emotions:  # If the user didn't appreciate the change of seat position by system
-            return emotion, 1
-        return emotion, 0  # The user appreciated the change of seat position by system
+        return emotion
 
+    """
     def run(self):
-        """
         Thread that handles the mood detector, with a certain frequency look the frame
         and checks if the user doesn't like the changed position
-        """
         # 1) while(tot_sec)
         act_seconds = 0
         while act_seconds < self.tot_seconds:
@@ -55,3 +46,4 @@ class MoodDetector(Thread):
                 # 5.2) print in the log that the position is changed
                 glob.controller.add_log_message(f"MOOD DETECTOR - - Previous position restored (" + mode + ")")
                 return
+    """

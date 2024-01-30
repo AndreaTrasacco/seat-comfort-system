@@ -6,12 +6,10 @@ from threading import Thread
 
 from deepface import DeepFace
 
-class UserRecognizer(Thread):
-    def __init__(self, users_storage_controller, frequency=1):
-        super(UserRecognizer, self).__init__()
+
+class UserRecognizerServer:
+    def __init__(self):
         self._user_faces_dir = "../data/user_faces_db"
-        self._users_storage_ctrl = users_storage_controller
-        self._frequency = frequency
 
     def detect_user(self, img):  # Returns the name of the user if it is registered, None otherwise
         lst = os.listdir(self._user_faces_dir)
@@ -26,15 +24,3 @@ class UserRecognizer(Thread):
                 return user_name
         else:
             return None
-
-    def run(self):
-        while not glob.stop_flag:
-            time.sleep(1 / self._frequency)
-            with glob.shared_frame_lock:
-                img = copy.deepcopy(glob.actual_frame)
-            user_name = self.detect_user(img)
-            if user_name is not None:
-                glob.logged_user = self._users_storage_ctrl.retrieve_user(user_name)
-                glob.logged_user.set_mode(False)
-                glob.controller.rotate_back_seat(glob.logged_user.get_position())
-                return

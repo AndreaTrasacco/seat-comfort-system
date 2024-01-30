@@ -12,7 +12,7 @@ from client.gui.rigth_side_view import RightSideView
 from client.gui.textfield_view import TextFieldView
 from imagecapturing.image_picker_client import ImagePickerClient
 from seatcomfortlogic.users_storage_controller import UsersStorageController
-from server.userrecognition.user_recognizer import UserRecognizer
+from server.userrecognition.user_recognizer_server import UserRecognizer
 
 
 class SeatComfortController:
@@ -21,12 +21,6 @@ class SeatComfortController:
 
     def __init__(self):
         self._user_faces_dir = "../server/data/user_faces_db"
-        # initialize the GUI
-        self.master = tk.Tk()
-        self.master.wm_title("Seat Comfort System")
-        self.textfield_view = None
-        self.right_side_view = None
-        self.camera_view = CameraView(self.master)
 
         self._users_storage_controller = UsersStorageController()
         self._need_detector_thread = EyesDetector(1, 5)
@@ -34,8 +28,6 @@ class SeatComfortController:
         self._user_recognizer_thread = UserRecognizer(self._users_storage_controller)
 
     def main(self):
-        self.textfield_view = TextFieldView(self.master)
-        self.right_side_view = RightSideView(self.master)
         controller_thread = threading.Thread(target=self.run)  # start all the other threads
         controller_thread.start()
         self.master.mainloop()  # start the GUI

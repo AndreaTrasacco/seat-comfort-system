@@ -1,23 +1,17 @@
-import time
-import copy
-import IAProject.client.globals as glob
 from threading import Thread
 from server.eyesdetection.eyes_detection import EyesDetection
-from server.mooddetection.mood_detector import MoodDetector
 
-
+# TODO cancellare classe
 class EyesDetector(Thread):
-    def __init__(self, frequency, num_cons_frame):
-        super(EyesDetector, self).__init__()
+    def __init__(self):
         self.eyes_detection = EyesDetection()
-        self.frequency = frequency # frequency of the detection
-        self.num_cons_frame = num_cons_frame  # Number of consecutive frames to be used for changing class
 
+    """
     def run(self):
-        """
+        
         Thread that handles the eyes detector, with a certain frequency looks the frame
         and checks if for a certain number of frames closed or open eyes are detected
-        """
+        
         # 1) while true + sleep(frequency)
         act_cons_frame = 1
         prev_detection = None
@@ -69,6 +63,6 @@ class EyesDetector(Thread):
                 mood_detector.start()
                 mood_detector.join()
             prev_detection = current_detection
-
+    """
     def detect_eyes(self, img):
         return self.eyes_detection.classify_eyes(img)
