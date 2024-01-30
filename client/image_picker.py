@@ -16,7 +16,6 @@ class ImagePicker(Thread):
         time.sleep(2)
         self._camera.hflip = True
         self._camera.resolution = (432, 540)
-        self._camera.capture("img.jpg", format="jpeg")
         self._frequency = frequency
 
     def capture_image(self):  # Capture the image and returns it as a numpy array
