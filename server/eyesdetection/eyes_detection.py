@@ -10,12 +10,12 @@ from keras.models import model_from_json
 
 class EyesDetection:
     def __init__(self):
-        self.json_path = "models/model.json"
-        self.weights_path = "models/model.h5"
+        self.json_path = "eyesdetection/models/model.json"
+        self.weights_path = "eyesdetection/models/model.h5"
 
         self.model = self.load_model(self.json_path, self.weights_path)
         self.detector = dlib.get_frontal_face_detector()
-        self.predictor = dlib.shape_predictor("../eyesdetection/shape_predictor_68_face_landmarks.dat")
+        self.predictor = dlib.shape_predictor("eyesdetection/shape_predictor_68_face_landmarks.dat")
 
     def load_model(self, json_path, weights_path):
         """ Loads keras model
