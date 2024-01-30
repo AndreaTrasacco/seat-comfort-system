@@ -7,16 +7,17 @@ sock = None
 def send(data):
     json_data = json.dumps(data)
     # send the length in bytes of the message
-    size_data = (get_size(json_data)).to_bytes(4, byteorder='little')
+    data = json_data.encode(encoding='utf-8')
+    size_data = (get_size(data)).to_bytes(4, byteorder='little')
     sock.sendall(size_data)
     # send the message
-    sock.sendall(json_data.encode())
+    sock.sendall(data)
     print('Message sent.')
 
 
 def recv():
     # recv data len
-    data_size = int(sock.recv(4).decode())
+    data_size = sock.recv(4)
     data_size = int.from_bytes(data_size, byteorder='little')
     # recv the data
     data = b''
@@ -25,7 +26,7 @@ def recv():
         if not data:
             break  # Connection closed
         data += data
-
+    print("HERE")
     data = data.decode('utf-8')
     return json.loads(data)
 
