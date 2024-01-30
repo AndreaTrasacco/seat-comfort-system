@@ -5,6 +5,7 @@ import time
 import tkinter as tk
 
 import globals as glob
+import socket_communication
 from client.eyesdetection.eyes_detector import EyesDetector
 from client.gui.camera_view import CameraView
 from client.gui.rigth_side_view import RightSideView
@@ -36,9 +37,9 @@ class SeatComfortController:
         host = '169.254.232.238'
         port = 8000
         # Create a socket object
-        glob.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        socket_communication.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         # Connect to the server
-        glob.sock.connect((host, port))
+        socket_communication.sock.connect((host, port))
         controller_thread = threading.Thread(target=self.run)  # start all the other threads
         controller_thread.start()
         self.master.mainloop()  # start the GUI
@@ -50,10 +51,11 @@ class SeatComfortController:
         if self._camera_thread.is_alive():
             self._camera_thread.join()
         if glob.logged_user is not None:
-            glob.send({"type": "save", "user": glob.logged_user})
-            reply = glob.recv()
+            socket_communication.send({"type": "save", "user": glob.logged_user})
+            reply = socket_communication.recv()
             if reply["payload"] == 0:
                 print("PROFILE SAVED ON THE SERVER")
+            socket_communication.sock.close()
 
     def run(self):
         # Start thread for capturing frames
@@ -74,8 +76,8 @@ class SeatComfortController:
         with glob.shared_frame_lock:
             img = copy.deepcopy(glob.actual_frame)
         if name != '':
-            glob.send({"type": "sign_up", "name": name, "picture": img})
-            glob.recv()  # Wait for the reply of the server (to wait for the completion of signup)
+            socket_communication.send({"type": "sign_up", "name": name, "picture": img})
+            socket_communication.recv()  # Wait for the reply of the server (to wait for the completion of signup)
             self.change_button_status("signup", False)
 
     def left_arrow_handler(self, event):
@@ -112,3 +114,4 @@ class SeatComfortController:
 
 if __name__ == '__main__':
     glob.controller.main()
+    # TODO EVENTUALE TRY EXCEPT

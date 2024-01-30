@@ -2,6 +2,7 @@ import copy
 import time
 import globals as glob
 from threading import Thread
+import socket_communication
 
 class MoodDetector(Thread):
     def __init__(self, tot_seconds, frequency, user_state):
@@ -12,8 +13,8 @@ class MoodDetector(Thread):
         self.user_state = user_state
 
     def get_mood(self, img):  # It returns the emotion and 1 if the detected emotion was "bad", 0 otherwise
-        glob.send({"type": "need_detection", "frame": img})
-        emotion = glob.recv()["payload"]
+        socket_communication.send({"type": "need_detection", "frame": img})
+        emotion = socket_communication.recv()["payload"]
         if emotion in self._bad_emotions:  # If the user didn't appreciate the change of seat position by system
             return emotion, 1
         return emotion, 0  # The user appreciated the change of seat position by system
