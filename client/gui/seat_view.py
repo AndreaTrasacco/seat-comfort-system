@@ -10,8 +10,8 @@ class SeatView:
     def __init__(self, master):
         self.master = master
         self.frame = tk.Frame(master, bg="white")
-        self.seat = Image.open("img/seat.png")
-        self.back_seat = Image.open("img/back_seat_2.png")
+        self.seat = Image.open("gui/img/seat.png")
+        self.back_seat = Image.open("gui/img/back_seat_2.png")
 
         self.canvas = tk.Canvas(self.frame, width=600, height=350, bg="white")
         self.canvas.pack()
@@ -28,8 +28,8 @@ class SeatView:
         self.canvas.create_image(270, 315, anchor=tk.SW, image=self.seat_tk)
 
         # create the two arrows used to move the seat
-        self.left_arrow_image = Image.open("img/left_arrow.jpg")
-        self.right_arrow_image = Image.open("img/right_arrow.jpg")
+        self.left_arrow_image = Image.open("gui/img/left_arrow.jpg")
+        self.right_arrow_image = Image.open("gui/img/right_arrow.jpg")
         self.left_arrow_photo = ImageTk.PhotoImage(self.left_arrow_image)
         self.right_arrow_photo = ImageTk.PhotoImage(self.right_arrow_image)
 

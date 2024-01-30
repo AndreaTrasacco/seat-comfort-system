@@ -19,7 +19,6 @@ class SeatComfortController:
     SLEEPING_POSITION_DEFAULT = 60  # Degrees w.r.t "awake position" of the back seat when the user is sleeping
 
     def __init__(self):
-        self._user_faces_dir = "../server/data/user_faces_db"
         # initialize the GUI
         self.master = tk.Tk()
         self.master.wm_title("Seat Comfort System")
