@@ -1,6 +1,7 @@
-import threading
-import sys
 import json
+import sys
+import threading
+
 from client.seatcomfortlogic.seat_comfort_controller import SeatComfortController
 
 # lock to ensure mutual exclusion for the access of the frame
@@ -22,26 +23,23 @@ stop_flag: bool = False
 
 controller = SeatComfortController()
 
+sock = None
 
-def send(sock, data):
+
+def send(data):
     json_data = json.dumps(data)
     # send the length in bytes of the message
-    sock.send(str(get_size(json_data)).encode())
-    # wait for the reply
-    reply = sock.recv(1024).decode('utf-8')
-    if reply == 'OK':
-        # send the message
-        sock.send(json_data.encode())
-        print('Message sent.')
-    else:
-        print('Error in sending data')
+    size_data = (get_size(json_data)).to_bytes(4, byteorder='little')
+    sock.sendall(size_data)
+    # send the message
+    sock.sendall(json_data.encode())
+    print('Message sent.')
 
 
-def recv(sock):
+def recv():
     # recv data len
-    data_size = int(sock.recv(1024).decode())
-    # reply with ok message
-    sock.send('OK'.encode())
+    data_size = int(sock.recv(4).decode())
+    data_size = int.from_bytes(data_size, byteorder='little')
     # recv the data
     data = b''
     while len(data) < data_size:

@@ -11,11 +11,9 @@ class MoodDetector(Thread):
         self.frequency = frequency
         self.user_state = user_state
 
-    def get_mood(self, img):  # It returns 1 if the detected emotion was "bad", 0 otherwise
-        # detection = DeepFace.analyze(img, actions=["emotion"], enforce_detection=False)
-        # emotion = detection[0]['dominant_emotion']
-        # TODO
-        emotion = "happy"
+    def get_mood(self, img):  # It returns the emotion and 1 if the detected emotion was "bad", 0 otherwise
+        glob.send({"type": "need_detection", "frame": img})
+        emotion = glob.recv()["payload"]
         if emotion in self._bad_emotions:  # If the user didn't appreciate the change of seat position by system
             return emotion, 1
         return emotion, 0  # The user appreciated the change of seat position by system

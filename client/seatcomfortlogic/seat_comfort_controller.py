@@ -1,16 +1,15 @@
 import copy
+import socket
 import threading
 import time
 import tkinter as tk
 
-from PIL import Image
-
 import globals as glob
-from client.image_picker import ImagePicker
 from client.eyesdetection.eyes_detector import EyesDetector
 from client.gui.camera_view import CameraView
 from client.gui.rigth_side_view import RightSideView
 from client.gui.textfield_view import TextFieldView
+from client.image_picker import ImagePicker
 from client.userrecognition.user_recognizer import UserRecognizer
 
 
@@ -19,20 +18,27 @@ class SeatComfortController:
     SLEEPING_POSITION_DEFAULT = 60  # Degrees w.r.t "awake position" of the back seat when the user is sleeping
 
     def __init__(self):
-        # initialize the GUI
+        # Initialize the GUI
         self.master = tk.Tk()
         self.master.wm_title("Seat Comfort System")
         self.textfield_view = None
         self.right_side_view = None
         self.camera_view = CameraView(self.master)
-
-        self._need_detector_thread = EyesDetector(1, 5)
+        self.textfield_view = TextFieldView(self.master)
+        self.right_side_view = RightSideView(self.master)
+        # Define the different threads that are needed
         self._camera_thread = ImagePicker()
+        self._need_detector_thread = EyesDetector(1, 5)
         self._user_recognizer_thread = UserRecognizer()
 
     def main(self):
-        self.textfield_view = TextFieldView(self.master)
-        self.right_side_view = RightSideView(self.master)
+        # Server configuration
+        host = '169.254.232.238'
+        port = 8000
+        # Create a socket object
+        glob.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        # Connect to the server
+        glob.sock.connect((host, port))
         controller_thread = threading.Thread(target=self.run)  # start all the other threads
         controller_thread.start()
         self.master.mainloop()  # start the GUI
@@ -44,9 +50,10 @@ class SeatComfortController:
         if self._camera_thread.is_alive():
             self._camera_thread.join()
         if glob.logged_user is not None:
-            # self._users_storage_controller.save_user(glob.logged_user)
-            # TODO SEND MESSAGE
-            pass
+            glob.send({"type": "save", "user": glob.logged_user})
+            reply = glob.recv()
+            if reply["payload"] == 0:
+                print("PROFILE SAVED ON THE SERVER")
 
     def run(self):
         # Start thread for capturing frames
@@ -67,14 +74,8 @@ class SeatComfortController:
         with glob.shared_frame_lock:
             img = copy.deepcopy(glob.actual_frame)
         if name != '':
-            img_pil = Image.fromarray(img)
-            # TODO SEND MESSAGE TO SERVER AND WAIT FOR THE REPLY
-            # save the captured frame, it must be used for the user recognition
-            # img_pil.save(self._user_faces_dir + "/" + name + ".jpg")
-            # new_user = glob.User(name,
-            #                 SeatComfortController.AWAKE_POSITION_DEFAULT,
-            #                 SeatComfortController.SLEEPING_POSITION_DEFAULT)
-            # self._users_storage_controller.save_user(new_user)
+            glob.send({"type": "sign_up", "name": name, "picture": img})
+            glob.recv()  # Wait for the reply of the server (to wait for the completion of signup)
             self.change_button_status("signup", False)
 
     def left_arrow_handler(self, event):

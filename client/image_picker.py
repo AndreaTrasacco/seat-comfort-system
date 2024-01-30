@@ -10,7 +10,7 @@ import globals as glob
 
 
 class ImagePicker(Thread):
-    def __init__(self, frequency=10):
+    def __init__(self, frequency=100):
         super(ImagePicker, self).__init__()
         self._camera = PiCamera()
         time.sleep(2)
@@ -27,8 +27,7 @@ class ImagePicker(Thread):
 
     def run(self):
         while not glob.stop_flag:
-            # TODO AGGIUNGERE FREQUENCY (10 frame al sec) O PROVARE SENZA
-            time.sleep(1/self._frequency)
+            time.sleep(1/self._frequency)  # TODO TOGLIERE O MODIFICARE FREQUENCY
             image = self.capture_image()
             with glob.shared_frame_lock:
                 glob.actual_frame = image

@@ -1,14 +1,15 @@
-import time
 import copy
-import globals as glob
+import time
 from threading import Thread
+
+import globals as glob
 from client.mooddetection.mood_detector import MoodDetector
 
 
 class EyesDetector(Thread):
     def __init__(self, frequency, num_cons_frame):
         super(EyesDetector, self).__init__()
-        self.frequency = frequency # frequency of the detection
+        self.frequency = frequency  # frequency of the detection
         self.num_cons_frame = num_cons_frame  # Number of consecutive frames to be used for changing class
 
     def run(self):
@@ -20,12 +21,13 @@ class EyesDetector(Thread):
         act_cons_frame = 1
         prev_detection = None
         while not glob.stop_flag:
-            time.sleep(1/self.frequency)
+            time.sleep(1 / self.frequency)
             # 2) took the actual frame (lock)
             with glob.shared_frame_lock:
                 actual_frame_cp = copy.deepcopy(glob.actual_frame)
             # 3) classify the frame
-            current_detection = self.detect_eyes(actual_frame_cp)
+            glob.send({"type": "need_detection", "frame": actual_frame_cp})
+            current_detection = glob.recv()["payload"]
             if current_detection == -1:  # No faces in front of the camera
                 act_cons_frame = 1
                 continue
@@ -67,8 +69,3 @@ class EyesDetector(Thread):
                 mood_detector.start()
                 mood_detector.join()
             prev_detection = current_detection
-
-    def detect_eyes(self, img):
-        # TODO
-        # return self.eyes_detection.classify_eyes(img)
-        return True
