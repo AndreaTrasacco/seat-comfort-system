@@ -1,6 +1,6 @@
 import time
 import copy
-import globals as glob
+import IAProject.client.globals as glob
 from threading import Thread
 from server.eyesdetection.eyes_detection import EyesDetection
 from server.mooddetection.mood_detector import MoodDetector

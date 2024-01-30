@@ -5,14 +5,13 @@ import tkinter as tk
 
 from PIL import Image
 
-import globals as glob
-from server.eyesdetection.eyes_detector import EyesDetector
+import client.globals as glob
+from client.image_picker import ImagePicker
+from client.eyesdetection.eyes_detector import EyesDetector
 from client.gui.camera_view import CameraView
 from client.gui.rigth_side_view import RightSideView
 from client.gui.textfield_view import TextFieldView
-from imagecapturing.image_picker_client import ImagePickerClient
-from seatcomfortlogic.users_storage_controller import UsersStorageController
-from server.userrecognition.user_recognizer import UserRecognizer
+from client.userrecognition.user_recognizer import UserRecognizer
 
 
 class SeatComfortController:
@@ -28,10 +27,9 @@ class SeatComfortController:
         self.right_side_view = None
         self.camera_view = CameraView(self.master)
 
-        self._users_storage_controller = UsersStorageController()
         self._need_detector_thread = EyesDetector(1, 5)
-        self._camera_thread = ImagePickerClient()
-        self._user_recognizer_thread = UserRecognizer(self._users_storage_controller)
+        self._camera_thread = ImagePicker()
+        self._user_recognizer_thread = UserRecognizer()
 
     def main(self):
         self.textfield_view = TextFieldView(self.master)
@@ -47,7 +45,9 @@ class SeatComfortController:
         if self._camera_thread.is_alive():
             self._camera_thread.join()
         if glob.logged_user is not None:
-            self._users_storage_controller.save_user(glob.logged_user)
+            # self._users_storage_controller.save_user(glob.logged_user)
+            # TODO SEND MESSAGE
+            pass
 
     def run(self):
         # Start thread for capturing frames
@@ -69,12 +69,13 @@ class SeatComfortController:
             img = copy.deepcopy(glob.actual_frame)
         if name != '':
             img_pil = Image.fromarray(img)
+            # TODO SEND MESSAGE TO SERVER AND WAIT FOR THE REPLY
             # save the captured frame, it must be used for the user recognition
-            img_pil.save(self._user_faces_dir + "/" + name + ".jpg")
-            new_user = glob.User(name,
-                            SeatComfortController.AWAKE_POSITION_DEFAULT,
-                            SeatComfortController.SLEEPING_POSITION_DEFAULT)
-            self._users_storage_controller.save_user(new_user)
+            # img_pil.save(self._user_faces_dir + "/" + name + ".jpg")
+            # new_user = glob.User(name,
+            #                 SeatComfortController.AWAKE_POSITION_DEFAULT,
+            #                 SeatComfortController.SLEEPING_POSITION_DEFAULT)
+            # self._users_storage_controller.save_user(new_user)
             self.change_button_status("signup", False)
 
     def left_arrow_handler(self, event):

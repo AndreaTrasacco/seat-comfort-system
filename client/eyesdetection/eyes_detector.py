@@ -1,15 +1,13 @@
 import time
 import copy
-import globals as glob
+import IAProject.client.globals as glob
 from threading import Thread
-from server.eyesdetection.eyes_detection import EyesDetection
-from server.mooddetection.mood_detector import MoodDetector
+from client.mooddetection.mood_detector import MoodDetector
 
 
 class EyesDetector(Thread):
     def __init__(self, frequency, num_cons_frame):
         super(EyesDetector, self).__init__()
-        self.eyes_detection = EyesDetection()
         self.frequency = frequency # frequency of the detection
         self.num_cons_frame = num_cons_frame  # Number of consecutive frames to be used for changing class
 
@@ -71,4 +69,6 @@ class EyesDetector(Thread):
             prev_detection = current_detection
 
     def detect_eyes(self, img):
-        return self.eyes_detection.classify_eyes(img)
+        # TODO
+        # return self.eyes_detection.classify_eyes(img)
+        return True

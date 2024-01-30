@@ -1,6 +1,6 @@
 import tkinter as tk
 
-import globals as glob
+import IAProject.client.globals as glob
 
 
 class TextFieldView:
