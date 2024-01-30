@@ -3,6 +3,7 @@ import time
 from threading import Thread
 
 import globals as glob
+import socket_communication
 from client.mooddetection.mood_detector import MoodDetector
 
 
@@ -26,8 +27,8 @@ class EyesDetector(Thread):
             with glob.shared_frame_lock:
                 actual_frame_cp = copy.deepcopy(glob.actual_frame)
             # 3) classify the frame
-            glob.send({"type": "need_detection", "frame": actual_frame_cp})
-            current_detection = glob.recv()["payload"]
+            socket_communication.send({"type": "need_detection", "frame": actual_frame_cp})
+            current_detection = socket_communication.recv()["payload"]
             if current_detection == -1:  # No faces in front of the camera
                 act_cons_frame = 1
                 continue
