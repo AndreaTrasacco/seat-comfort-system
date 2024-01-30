@@ -6,7 +6,7 @@ import numpy as np
 from PIL import Image
 from picamera import PiCamera
 
-import globals as glob
+import client.globals as glob
 
 
 class ImagePicker(Thread):
