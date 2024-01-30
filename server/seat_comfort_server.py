@@ -34,7 +34,7 @@ class SeatComfortServer:
         try:
             while True:
                 # Accept a connection from a client
-                socket_communication.sock, client_address = socket_communication.sock.accept()
+                socket_communication.sock, client_address = server_socket.accept()
                 print(f"Connection from {client_address}")
 
                 try:

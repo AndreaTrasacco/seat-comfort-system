@@ -76,7 +76,7 @@ class SeatComfortController:
         with glob.shared_frame_lock:
             img = copy.deepcopy(glob.actual_frame)
         if name != '':
-            socket_communication.send({"type": "sign_up", "name": name, "picture": img})
+            socket_communication.send({"type": "sign-up", "name": name, "picture": img})
             socket_communication.recv()  # Wait for the reply of the server (to wait for the completion of signup)
             self.change_button_status("signup", False)
 

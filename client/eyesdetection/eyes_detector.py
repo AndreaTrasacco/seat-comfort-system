@@ -27,7 +27,7 @@ class EyesDetector(Thread):
             with glob.shared_frame_lock:
                 actual_frame_cp = copy.deepcopy(glob.actual_frame)
             # 3) classify the frame
-            socket_communication.send({"type": "need_detection", "frame": actual_frame_cp})
+            socket_communication.send({"type": "need-detection", "frame": actual_frame_cp.tolist()})
             current_detection = socket_communication.recv()["payload"]
             if current_detection == -1:  # No faces in front of the camera
                 act_cons_frame = 1
