@@ -25,14 +25,14 @@ class SeatComfortController:
         self.textfield_view = None
         self.right_side_view = None
         self.camera_view = CameraView(self.master)
-        self.textfield_view = TextFieldView(self.master)
-        self.right_side_view = RightSideView(self.master)
         # Define the different threads that are needed
         self._camera_thread = ImagePicker()
         self._need_detector_thread = EyesDetector(1, 5)
         self._user_recognizer_thread = UserRecognizer()
 
     def main(self):
+        self.textfield_view = TextFieldView(self.master)
+        self.right_side_view = RightSideView(self.master)
         # Server configuration
         host = '169.254.232.238'
         port = 8000
