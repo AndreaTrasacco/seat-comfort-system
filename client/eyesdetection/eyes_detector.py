@@ -1,6 +1,6 @@
 import time
 import copy
-import client.globals as glob
+import globals as glob
 from threading import Thread
 from client.mooddetection.mood_detector import MoodDetector
 

@@ -5,7 +5,7 @@ import tkinter as tk
 
 from PIL import Image
 
-import client.globals as glob
+import globals as glob
 from client.image_picker import ImagePicker
 from client.eyesdetection.eyes_detector import EyesDetector
 from client.gui.camera_view import CameraView

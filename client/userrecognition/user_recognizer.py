@@ -1,6 +1,6 @@
 import copy
 import time
-import client.globals as glob
+import globals as glob
 from threading import Thread
 
 class UserRecognizer(Thread):

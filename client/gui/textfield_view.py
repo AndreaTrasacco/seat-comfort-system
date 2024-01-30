@@ -1,6 +1,6 @@
 import tkinter as tk
 
-import client.globals as glob
+import globals as glob
 
 class TextFieldView:
     def __init__(self, master):

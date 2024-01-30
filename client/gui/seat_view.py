@@ -3,7 +3,7 @@ import tkinter as tk
 
 from PIL import ImageTk, Image
 
-import client.globals as glob
+import globals as glob
 
 
 class SeatView:
