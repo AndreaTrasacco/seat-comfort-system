@@ -3,7 +3,7 @@ import time
 from threading import Thread
 
 import globals as glob
-
+import socket_communication
 
 class UserRecognizer(Thread):
     def __init__(self, frequency=1):
@@ -15,8 +15,8 @@ class UserRecognizer(Thread):
             time.sleep(1 / self._frequency)
             with glob.shared_frame_lock:
                 img = copy.deepcopy(glob.actual_frame)
-            glob.send({"type": "user_detection", "frame": img})
-            reply = glob.recv()
+            socket_communication.send({"type": "user_detection", "frame": img})
+            reply = socket_communication.recv()
             user = reply["payload"]
             if user is not None:
                 glob.logged_user = user
