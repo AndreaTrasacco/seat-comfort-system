@@ -10,7 +10,7 @@ from eyesdetection.eyes_detector import EyesDetector
 from gui.camera_view import CameraView
 from gui.rigth_side_view import RightSideView
 from gui.textfield_view import TextFieldView
-from imagepicker.image_picker_client import ImagePickerClient
+from imagecapturing.image_picker_client import ImagePickerClient
 from seatcomfortlogic.users_storage_controller import UsersStorageController, User
 from userrecognition.user_recognizer import UserRecognizer
 

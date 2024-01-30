@@ -1,8 +1,6 @@
 import io
 import time
-import sys
 import socket
-import json
 
 import numpy as np
 from PIL import Image
