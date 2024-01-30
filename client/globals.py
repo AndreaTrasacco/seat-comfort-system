@@ -1,6 +1,6 @@
 import threading
 
-from seatcomfortlogic.seat_comfort_controller import SeatComfortController
+from client.seatcomfortlogic.seat_comfort_controller import SeatComfortController
 
 # lock to ensure mutual exclusion for the access of the frame
 shared_frame_lock = threading.Lock()

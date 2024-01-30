@@ -3,7 +3,7 @@ import tkinter as tk
 
 from PIL import ImageTk, Image
 
-import IAProject.client.globals as glob
+import client.globals as glob
 
 
 class SeatView:
@@ -45,9 +45,9 @@ class SeatView:
         self.frame.pack(side=tk.TOP)
 
     def rotate(self, degrees, absolute):
-        if not absolute: # relative degrees
+        if not absolute:  # relative degrees
             self.actual_degree += degrees
-        else: # absolute degree (progressive change of the seat, 10 degrees at a time)
+        else:  # absolute degree (progressive change of the seat, 10 degrees at a time)
             direction = 1
             if self.actual_degree < degrees:
                 min = self.actual_degree
