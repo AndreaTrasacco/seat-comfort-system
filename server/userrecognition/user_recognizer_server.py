@@ -1,8 +1,4 @@
-import copy
 import os
-import time
-import globals as glob
-from threading import Thread
 
 from deepface import DeepFace
 
