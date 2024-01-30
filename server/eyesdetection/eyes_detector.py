@@ -2,8 +2,8 @@ import time
 import copy
 import globals as glob
 from threading import Thread
-from eyesdetection.eyes_detection import EyesDetection
-from mooddetection.mood_detector import MoodDetector
+from server.eyesdetection.eyes_detection import EyesDetection
+from server.mooddetection.mood_detector import MoodDetector
 
 
 class EyesDetector(Thread):

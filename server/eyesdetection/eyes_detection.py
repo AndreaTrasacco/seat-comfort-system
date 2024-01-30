@@ -10,8 +10,8 @@ from keras.models import model_from_json
 
 class EyesDetection:
     def __init__(self):
-        self.json_path = "../eyesdetection/models/model.json"
-        self.weights_path = "../eyesdetection/models/model.h5"
+        self.json_path = "models/model.json"
+        self.weights_path = "models/model.h5"
 
         self.model = self.load_model(self.json_path, self.weights_path)
         self.detector = dlib.get_frontal_face_detector()

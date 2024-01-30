@@ -6,13 +6,13 @@ import tkinter as tk
 from PIL import Image
 
 import globals as glob
-from eyesdetection.eyes_detector import EyesDetector
-from gui.camera_view import CameraView
-from gui.rigth_side_view import RightSideView
-from gui.textfield_view import TextFieldView
+from server.eyesdetection.eyes_detector import EyesDetector
+from client.gui.camera_view import CameraView
+from client.gui.rigth_side_view import RightSideView
+from client.gui.textfield_view import TextFieldView
 from imagecapturing.image_picker_client import ImagePickerClient
 from seatcomfortlogic.users_storage_controller import UsersStorageController, User
-from userrecognition.user_recognizer import UserRecognizer
+from server.userrecognition.user_recognizer import UserRecognizer
 
 
 class SeatComfortController:
@@ -20,7 +20,7 @@ class SeatComfortController:
     SLEEPING_POSITION_DEFAULT = 60  # Degrees w.r.t "awake position" of the back seat when the user is sleeping
 
     def __init__(self):
-        self._user_faces_dir = "../data/user_faces_db"
+        self._user_faces_dir = "../server/data/user_faces_db"
         # initialize the GUI
         self.master = tk.Tk()
         self.master.wm_title("Seat Comfort System")

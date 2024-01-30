@@ -1,5 +1,5 @@
-from gui.log_view import LogView
-from gui.seat_view import SeatView
+from client.gui.log_view import LogView
+from client.gui.seat_view import SeatView
 import tkinter as tk
 
 
