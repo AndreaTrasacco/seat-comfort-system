@@ -8,7 +8,7 @@ def send(data):
     json_data = json.dumps(data)
     # send the length in bytes of the message
     data = json_data.encode(encoding='utf-8')
-    size_data = (get_size(data)).to_bytes(4, byteorder='little')
+    size_data = (len(data)).to_bytes(4, byteorder='little')
     sock.sendall(size_data)
     # send the message
     sock.sendall(data)
