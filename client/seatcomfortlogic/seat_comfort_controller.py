@@ -1,4 +1,5 @@
 import copy
+import pickle
 import socket
 import threading
 import time
@@ -53,7 +54,7 @@ class SeatComfortController:
         if self._camera_thread.is_alive():
             self._camera_thread.join()
         if glob.logged_user is not None:
-            socket_communication.send({"type": "save", "user": glob.logged_user})
+            socket_communication.send({"type": "save", "user": pickle.dumps(glob.logged_user)})
             reply = socket_communication.recv()
             if reply["payload"] == 0:
                 print("PROFILE SAVED ON THE SERVER")

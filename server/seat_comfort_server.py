@@ -84,7 +84,7 @@ class SeatComfortServer:
                             socket_communication.send(reply_msg)
                         elif data['type'] == 'save':
                             # recv the user to be saved
-                            user = data['user']
+                            user = pickle.loads(data['user'])
                             self._users_storage_controller.save_user(user)
                             reply_msg = {'payload': 'OK'}
                             socket_communication.send(reply_msg)
