@@ -20,15 +20,14 @@ def recv():
     data_size = sock.recv(4)
     data_size = int.from_bytes(data_size, byteorder='little')
     # recv the data
-    data = b''
-    while len(data) < data_size:
-        data = sock.recv(data_size - len(data))
+    msg_data = b''
+    while len(msg_data) < data_size:
+        data = sock.recv(data_size - len(msg_data))
         if not data:
             break  # Connection closed
-        data += data
-    print("HERE")
-    data = data.decode('utf-8')
-    return json.loads(data)
+        msg_data += data
+    msg_data = msg_data.decode('utf-8')
+    return json.loads(msg_data)
 
 
 def get_size(obj, seen=None):

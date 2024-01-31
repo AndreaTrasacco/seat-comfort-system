@@ -17,7 +17,7 @@ class SeatComfortServer:
     SLEEPING_POSITION_DEFAULT = 60  # Degrees w.r.t "awake position" of the back seat when the user is sleeping
 
     def __init__(self):
-        self._user_faces_dir = "../server/data/user_faces_db"
+        self._user_faces_dir = "data/user_faces_db"
         self._users_storage_controller = UsersStorageController()
         self._host = '169.254.232.238'
         self._port = 8000
@@ -62,11 +62,11 @@ class SeatComfortServer:
                             # recv the frame from the client
                             frame = np.array(data['frame'])
                             name = self.user_recognizer_server.detect_user(frame)
-                            user = self._users_storage_controller.retrieve_user(name)
                             # reply with the name of the detetcted user
                             if name is None:
                                 reply_msg = {'payload': None}
                             else:
+                                user = self._users_storage_controller.retrieve_user(name)
                                 reply_msg = {'payload': user}
                             socket_communication.send(reply_msg)
                         elif data['type'] == 'need-detection':
