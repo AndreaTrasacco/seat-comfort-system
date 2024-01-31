@@ -18,6 +18,7 @@ class UserRecognizer(Thread):
             socket_communication.send({"type": "user-recognition", "frame": img.tolist()})
             reply = socket_communication.recv()
             user = reply["payload"]
+            print(reply)
             if user is not None:
                 glob.logged_user = user
                 glob.logged_user.set_mode(False)

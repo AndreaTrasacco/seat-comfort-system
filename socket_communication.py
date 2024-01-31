@@ -7,11 +7,11 @@ sock = None
 def send(data):
     json_data = json.dumps(data)
     # send the length in bytes of the message
-    size_data = (get_size(json_data)).to_bytes(4, byteorder='little')
+    data = json_data.encode(encoding='utf-8')
+    size_data = (len(data)).to_bytes(4, byteorder='little')
     sock.sendall(size_data)
     # send the message
-    sock.sendall(json_data.encode())
-    print('Message sent.')
+    sock.sendall(data)
 
 
 def recv():

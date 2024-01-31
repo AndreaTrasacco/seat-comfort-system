@@ -7,3 +7,4 @@ client/seatcomfortlogic/__pycache__/seat_comfort_controller.cpython-39.pyc
 client/mooddetection/__pycache__/mood_detector.cpython-39.pyc
 client/eyesdetection/__pycache__/eyes_detector.cpython-39.pyc
 client/__pycache__/image_picker.cpython-39.pyc
+__pycache__/socket_communication.cpython-39.pyc
