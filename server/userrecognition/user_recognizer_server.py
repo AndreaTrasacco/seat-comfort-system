@@ -5,7 +5,7 @@ from deepface import DeepFace
 
 class UserRecognizerServer:
     def __init__(self):
-        self._user_faces_dir = "../data/user_faces_db"
+        self._user_faces_dir = "data/user_faces_db"
 
     def detect_user(self, img):  # Returns the name of the user if it is registered, None otherwise
         lst = os.listdir(self._user_faces_dir)

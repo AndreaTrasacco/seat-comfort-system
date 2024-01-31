@@ -11,23 +11,23 @@ def send(data):
     size_data = (len(data)).to_bytes(4, byteorder='little')
     sock.sendall(size_data)
     # send the message
-    sock.sendall(data)
+    sock.sendall(json_data.encode())
+    
 
 
 def recv():
     # recv data len
-    data_size = int(sock.recv(4).decode())
+    data_size = sock.recv(4)
     data_size = int.from_bytes(data_size, byteorder='little')
     # recv the data
-    data = b''
-    while len(data) < data_size:
-        data = sock.recv(data_size - len(data))
+    msg_data = b''
+    while len(msg_data) < data_size:
+        data = sock.recv(data_size - len(msg_data))
         if not data:
             break  # Connection closed
-        data += data
-
-    data = data.decode('utf-8')
-    return json.loads(data)
+        msg_data += data
+    msg_data = msg_data.decode('utf-8')
+    return json.loads(msg_data)
 
 
 def get_size(obj, seen=None):
