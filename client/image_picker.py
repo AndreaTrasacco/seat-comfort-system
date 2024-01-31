@@ -26,7 +26,7 @@ class ImagePicker(Thread):
 
     def run(self):
         while not glob.stop_flag:
-            time.sleep(1/self._frequency)  # TODO TOGLIERE O MODIFICARE FREQUENCY
+            time.sleep(1/self._frequency)
             image = self.capture_image()
             with glob.shared_frame_lock:
                 glob.actual_frame = image
