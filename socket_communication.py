@@ -11,7 +11,7 @@ def send(data):
     size_data = (len(data)).to_bytes(4, byteorder='little')
     sock.sendall(size_data)
     # send the message
-    sock.sendall(json_data.encode())
+    sock.sendall(data)
     
 
 
