@@ -19,9 +19,8 @@ class UserRecognizer(Thread):
             with glob.controller.socket_lock:
                 socket_communication.send({"type": "user-recognition", "frame": img.tobytes()})
                 reply = socket_communication.recv()
-            user = pickle.loads(reply["payload"])
-            print(reply)
-            if user is not None:
+            if reply["payload"] is not None:
+                user = pickle.loads(reply["payload"])
                 glob.logged_user = user
                 glob.logged_user.set_mode(False)
                 glob.controller.rotate_back_seat(glob.logged_user.get_position())
