@@ -1,5 +1,5 @@
 #  Code taken from 'https://github.com/ymitiku/EyeStateDetection' and slightly adjusted
-
+import copy
 import os
 
 import cv2
@@ -279,6 +279,7 @@ class EyesDetection:
         return dlib_points
 
     def classify_eyes(self, img):
+        img = copy.deepcopy((img))
         gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         faces = self.detector(gray)
         for i, face in enumerate(faces):
