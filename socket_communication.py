@@ -1,18 +1,15 @@
-import json
 import sys
 
 sock = None
 
 
 def send(data):
-    json_data = json.dumps(data)
     # send the length in bytes of the message
-    data = json_data.encode(encoding='utf-8')
+    data = data.encode(encoding='utf-8')
     size_data = (len(data)).to_bytes(4, byteorder='little')
     sock.sendall(size_data)
     # send the message
     sock.sendall(data)
-    
 
 
 def recv():
@@ -26,8 +23,7 @@ def recv():
         if not data:
             break  # Connection closed
         msg_data += data
-    msg_data = msg_data.decode('utf-8')
-    return json.loads(msg_data)
+    return msg_data.decode('utf-8')
 
 
 def get_size(obj, seen=None):
