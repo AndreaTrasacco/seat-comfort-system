@@ -1,5 +1,4 @@
 import ast
-import sys
 
 sock = None
 
@@ -16,6 +15,8 @@ def send(data):
 def recv():
     # recv data len
     data_size = sock.recv(4)
+    if not data_size:
+        raise BrokenPipeError  # Connection closed
     data_size = int.from_bytes(data_size, byteorder='little')
     # recv the data
     msg_data = b''
@@ -25,24 +26,3 @@ def recv():
             raise BrokenPipeError  # Connection closed
         msg_data += data
     return ast.literal_eval(msg_data.decode('utf-8'))
-
-
-def get_size(obj, seen=None):
-    """Recursively finds size of objects"""
-    size = sys.getsizeof(obj)
-    if seen is None:
-        seen = set()
-    obj_id = id(obj)
-    if obj_id in seen:
-        return 0
-    # Important mark as seen *before* entering recursion to gracefully handle
-    # self-referential objects
-    seen.add(obj_id)
-    if isinstance(obj, dict):
-        size += sum([get_size(v, seen) for v in obj.values()])
-        size += sum([get_size(k, seen) for k in obj.keys()])
-    elif hasattr(obj, '__dict__'):
-        size += get_size(obj.__dict__, seen)
-    elif hasattr(obj, '__iter__') and not isinstance(obj, (str, bytes, bytearray)):
-        size += sum([get_size(i, seen) for i in obj])
-    return size
