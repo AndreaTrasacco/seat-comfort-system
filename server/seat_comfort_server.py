@@ -1,3 +1,4 @@
+import pickle
 import socket
 
 import numpy as np
@@ -45,7 +46,7 @@ class SeatComfortServer:
                         if data['type'] == 'sign-up':
                             # save the recv name and image
                             name = data['name']
-                            picture = np.array(data['picture']).reshape((540, 432, 3))
+                            picture = np.frombuffer(data['picture'], dtype=np.uint8).reshape((540, 432, 3))
                             img_pil = Image.fromarray(picture)
                             img_pil.save(self._user_faces_dir + "/" + name + ".jpg")
                             new_user = User(name,
@@ -59,24 +60,24 @@ class SeatComfortServer:
                             pass
                         elif data['type'] == 'user-recognition':
                             # recv the frame from the client
-                            frame = np.frombuffer(data['frame'], dtype=np.uint8)
+                            frame = np.frombuffer(data['frame'], dtype=np.uint8).reshape((540, 432, 3))
                             name = self.user_recognizer_server.detect_user(frame)
                             # reply with the name of the detetcted user
                             if name is None:
                                 reply_msg = {'payload': None}
                             else:
                                 user = self._users_storage_controller.retrieve_user(name)
-                                reply_msg = {'payload': user}
+                                reply_msg = {'payload': pickle.dumps(user)}
                             socket_communication.send(reply_msg)
                         elif data['type'] == 'need-detection':
                             # recv the frame from the client and classify the eyes state
-                            frame = np.array(data['frame']).reshape((540, 432, 3))
+                            frame = np.frombuffer(data['frame'], dtype=np.uint8).reshape((540, 432, 3))
                             eyes_state = self.eyes_detection.classify_eyes(frame)
                             reply_msg = {'payload': eyes_state}
                             socket_communication.send(reply_msg)
                         elif data['type'] == 'mood-detection':
                             # recv the frame from the client and classify the emotion
-                            frame = np.array(data['frame']).reshape((540, 432, 3))
+                            frame = np.frombuffer(data['frame'], dtype=np.uint8).reshape((540, 432, 3))
                             emotion = self.mood_detector_server.get_mood(frame)
                             # reply with the detetcted emotion
                             reply_msg = {'payload': emotion}

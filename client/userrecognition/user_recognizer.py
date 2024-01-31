@@ -1,4 +1,5 @@
 import copy
+import pickle
 import time
 from threading import Thread
 
@@ -18,7 +19,7 @@ class UserRecognizer(Thread):
             with glob.controller.socket_lock:
                 socket_communication.send({"type": "user-recognition", "frame": img.tobytes()})
                 reply = socket_communication.recv()
-            user = reply["payload"]
+            user = pickle.loads(reply["payload"])
             print(reply)
             if user is not None:
                 glob.logged_user = user
