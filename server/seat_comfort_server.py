@@ -1,15 +1,14 @@
 import socket
 
 import numpy as np
+from PIL import Image
 
 import socket_communication
-from PIL import Image
-from user import User
-
 from server.eyesdetection.eyes_detection import EyesDetection
 from server.mooddetection.mood_detector_server import MoodDetectorServer
 from server.seatcomfortlogic.users_storage_controller import UsersStorageController
 from server.userrecognition.user_recognizer_server import UserRecognizerServer
+from user import User
 
 
 class SeatComfortServer:
@@ -46,12 +45,12 @@ class SeatComfortServer:
                         if data['type'] == 'sign-up':
                             # save the recv name and image
                             name = data['name']
-                            picture = np.array(data['picture'])
+                            picture = np.array(data['picture']).reshape((540, 432, 3))
                             img_pil = Image.fromarray(picture)
                             img_pil.save(self._user_faces_dir + "/" + name + ".jpg")
                             new_user = User(name,
-                                                 SeatComfortServer.AWAKE_POSITION_DEFAULT,
-                                                 SeatComfortServer.SLEEPING_POSITION_DEFAULT)
+                                            SeatComfortServer.AWAKE_POSITION_DEFAULT,
+                                            SeatComfortServer.SLEEPING_POSITION_DEFAULT)
                             self._users_storage_controller.save_user(new_user)
 
                             # create the reply
@@ -60,7 +59,7 @@ class SeatComfortServer:
                             pass
                         elif data['type'] == 'user-recognition':
                             # recv the frame from the client
-                            frame = np.array(data['frame'])
+                            frame = np.frombuffer(data['frame'], dtype=np.uint8)
                             name = self.user_recognizer_server.detect_user(frame)
                             # reply with the name of the detetcted user
                             if name is None:
@@ -71,13 +70,13 @@ class SeatComfortServer:
                             socket_communication.send(reply_msg)
                         elif data['type'] == 'need-detection':
                             # recv the frame from the client and classify the eyes state
-                            frame = np.array(data['frame'])
+                            frame = np.array(data['frame']).reshape((540, 432, 3))
                             eyes_state = self.eyes_detection.classify_eyes(frame)
                             reply_msg = {'payload': eyes_state}
                             socket_communication.send(reply_msg)
                         elif data['type'] == 'mood-detection':
                             # recv the frame from the client and classify the emotion
-                            frame = np.array(data['frame'])
+                            frame = np.array(data['frame']).reshape((540, 432, 3))
                             emotion = self.mood_detector_server.get_mood(frame)
                             # reply with the detetcted emotion
                             reply_msg = {'payload': emotion}

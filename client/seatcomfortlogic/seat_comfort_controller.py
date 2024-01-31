@@ -30,6 +30,8 @@ class SeatComfortController:
         self._need_detector_thread = EyesDetector(1, 5)
         self._user_recognizer_thread = UserRecognizer()
 
+        self.socket_lock = threading.Lock()
+
     def main(self):
         self.textfield_view = TextFieldView(self.master)
         self.right_side_view = RightSideView(self.master)
@@ -76,8 +78,9 @@ class SeatComfortController:
         with glob.shared_frame_lock:
             img = copy.deepcopy(glob.actual_frame)
         if name != '':
-            socket_communication.send({"type": "sign-up", "name": name, "picture": img})
-            socket_communication.recv()  # Wait for the reply of the server (to wait for the completion of signup)
+            with self.socket_lock:
+                socket_communication.send({"type": "sign-up", "name": name, "picture": img.tobytes()})
+                socket_communication.recv()  # Wait for the reply of the server (to wait for the completion of signup)
             self.change_button_status("signup", False)
 
     def left_arrow_handler(self, event):

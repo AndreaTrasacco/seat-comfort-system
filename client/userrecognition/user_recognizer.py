@@ -15,8 +15,9 @@ class UserRecognizer(Thread):
             time.sleep(1 / self._frequency)
             with glob.shared_frame_lock:
                 img = copy.deepcopy(glob.actual_frame)
-            socket_communication.send({"type": "user-recognition", "frame": img.tolist()})
-            reply = socket_communication.recv()
+            with glob.controller.socket_lock:
+                socket_communication.send({"type": "user-recognition", "frame": img.tobytes()})
+                reply = socket_communication.recv()
             user = reply["payload"]
             print(reply)
             if user is not None:
