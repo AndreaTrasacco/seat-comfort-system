@@ -23,12 +23,15 @@ class EyesDetector(Thread):
         prev_detection = None
         while not glob.stop_flag:
             time.sleep(1 / self.frequency)
+            start_time = time.time()
             # 2) took the actual frame (lock)
             with glob.shared_frame_lock:
                 actual_frame_cp = copy.deepcopy(glob.actual_frame)
             # 3) classify the frame
             socket_communication.send({"type": "need-detection", "frame": actual_frame_cp.tobytes()})
             current_detection = socket_communication.recv()["payload"]
+            with open("eyes_log.csv", "a") as f:
+                f.write(str(time.time() - start_time) + "\n")
             if current_detection == -1:  # No faces in front of the camera
                 act_cons_frame = 1
                 continue
