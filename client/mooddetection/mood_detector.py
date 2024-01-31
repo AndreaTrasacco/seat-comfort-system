@@ -28,12 +28,15 @@ class MoodDetector(Thread):
         act_seconds = 0
         while act_seconds < self.tot_seconds:
             time.sleep(1 / self.frequency)
+            start_time = time.time()
             act_seconds += (1 / self.frequency)
             # 2) took the actual frame
             with glob.shared_frame_lock:
                 actual_frame_cp = copy.deepcopy(glob.actual_frame)
             # 3) classify the frame
             emotion, class_emotion = self.get_mood(actual_frame_cp)
+            with open("mood_detector.csv", "a") as f:
+                f.write(str(time.time() - start_time) + "\n")
             # 4) print in the log the emotion detected
             glob.controller.add_log_message(f"MOOD DETECTOR - - {emotion} detected")
             # 5) if the detected emotion is a bad emotion
