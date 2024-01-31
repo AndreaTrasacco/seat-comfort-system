@@ -22,7 +22,7 @@ def recv():
     while len(msg_data) < data_size:
         data = sock.recv(data_size - len(msg_data))
         if not data:
-            break  # Connection closed
+            raise BrokenPipeError  # Connection closed
         msg_data += data
     return ast.literal_eval(msg_data.decode('utf-8'))
 
