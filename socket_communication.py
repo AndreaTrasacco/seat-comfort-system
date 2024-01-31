@@ -1,5 +1,4 @@
 import ast
-import pickle
 import sys
 
 sock = None
@@ -7,7 +6,7 @@ sock = None
 
 def send(data):
     # send the length in bytes of the message
-    data = pickle.dumps(data)
+    data = str(data).encode(encoding='utf-8')
     size_data = (len(data)).to_bytes(4, byteorder='little')
     sock.sendall(size_data)
     # send the message
@@ -25,7 +24,7 @@ def recv():
         if not data:
             raise BrokenPipeError  # Connection closed
         msg_data += data
-    return pickle.loads(msg_data)
+    return ast.literal_eval(msg_data.decode('utf-8'))
 
 
 def get_size(obj, seen=None):

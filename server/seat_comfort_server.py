@@ -88,6 +88,9 @@ class SeatComfortServer:
                             self._users_storage_controller.save_user(user)
                             reply_msg = {'payload': 'OK'}
                             socket_communication.send(reply_msg)
+                            print("Client disconnected")
+                            socket_communication.sock.close()
+                            break
 
                 except (ConnectionResetError, BrokenPipeError):
                     print("Client disconnected")
