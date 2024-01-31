@@ -68,20 +68,20 @@ class SeatComfortServer:
                             else:
                                 user = self._users_storage_controller.retrieve_user(name)
                                 reply_msg = {'payload': pickle.dumps(user)}
-                            socket_communication.send(reply_msg)
+                            socket_communication.send(reply_msg, "U")
                         elif data['type'] == 'need-detection':
                             # recv the frame from the client and classify the eyes state
                             frame = np.frombuffer(data['frame'], dtype=np.uint8).reshape((540, 432, 3))
                             eyes_state = self.eyes_detection.classify_eyes(frame)
                             reply_msg = {'payload': eyes_state}
-                            socket_communication.send(reply_msg)
+                            socket_communication.send(reply_msg, "N")
                         elif data['type'] == 'mood-detection':
                             # recv the frame from the client and classify the emotion
                             frame = np.frombuffer(data['frame'], dtype=np.uint8).reshape((540, 432, 3))
                             emotion = self.mood_detector_server.get_mood(frame)
                             # reply with the detetcted emotion
                             reply_msg = {'payload': emotion}
-                            socket_communication.send(reply_msg)
+                            socket_communication.send(reply_msg, "M")
                         elif data['type'] == 'save':
                             # recv the user to be saved
                             user = pickle.loads(data['user'])

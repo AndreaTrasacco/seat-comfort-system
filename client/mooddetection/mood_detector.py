@@ -14,7 +14,7 @@ class MoodDetector(Thread):
 
     def get_mood(self, img):  # It returns the emotion and 1 if the detected emotion was "bad", 0 otherwise
         socket_communication.send({"type": "mood-detection", "frame": img.tobytes()})
-        emotion = socket_communication.recv()["payload"]
+        emotion = socket_communication.recv("M")["payload"]
         if emotion in self._bad_emotions:  # If the user didn't appreciate the change of seat position by system
             return emotion, 1
         return emotion, 0  # The user appreciated the change of seat position by system

@@ -14,7 +14,7 @@ from client.gui.textfield_view import TextFieldView
 from client.image_picker import ImagePicker
 from client.userrecognition.user_recognizer import UserRecognizer
 
-
+socket_communication.executor = "client"  #TODO TOGLIERE
 class SeatComfortController:
     AWAKE_POSITION_DEFAULT = 0  # Position of the back seat when the user is awake
     SLEEPING_POSITION_DEFAULT = 60  # Degrees w.r.t "awake position" of the back seat when the user is sleeping

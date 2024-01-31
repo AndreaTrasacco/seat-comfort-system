@@ -19,7 +19,7 @@ class UserRecognizer(Thread):
                 img = copy.deepcopy(glob.actual_frame)
             with glob.controller.socket_lock:
                 socket_communication.send({"type": "user-recognition", "frame": img.tobytes()})
-                reply = socket_communication.recv()
+                reply = socket_communication.recv("U")
             with open("user_recognizer.csv", "a") as f:
                 f.write(str(time.time() - start_time) + "\n")
             if reply["payload"] is not None:

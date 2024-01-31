@@ -5,14 +5,14 @@ sock = None
 
 executor = None
 start_time = 0
-
-def send(data):
+#TODO TOGLIERE PHASE
+def send(data, phase=""):
     global start_time
     if executor == "client":
         start_time = time.time()
     else:
         with open("log.csv", "a") as f:
-            f.write(str(time.time() - start_time) + "\n")
+            f.write(str(time.time() - start_time).replace('.',',') + ' ' + phase + "\n")
     # send the length in bytes of the message
     data = str(data).encode(encoding='utf-8')
     size_data = (len(data)).to_bytes(4, byteorder='little')
@@ -21,7 +21,7 @@ def send(data):
     sock.sendall(data)
 
 
-def recv():
+def recv(phase=""):
     global start_time
     # recv data len
     data_size = sock.recv(4)
@@ -37,7 +37,7 @@ def recv():
         msg_data += data
     if executor == "client":
         with open("log.csv", "a") as f:
-            f.write(str(time.time() - start_time) + "\n")
+            f.write(str(time.time() - start_time).replace('.',',') + ' ' + phase + "\n")
     else:
         start_time = time.time()
     return ast.literal_eval(msg_data.decode('utf-8'))
