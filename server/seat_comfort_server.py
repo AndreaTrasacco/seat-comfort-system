@@ -1,14 +1,14 @@
 import pickle
 import socket
+import os
 
 import numpy as np
 from PIL import Image
+from deepface import DeepFace
 
 import socket_communication
 from server.eyesdetection.eyes_detection import EyesDetection
-from server.mooddetection.mood_detector_server import MoodDetectorServer
-from server.seatcomfortlogic.users_storage_controller import UsersStorageController
-from server.userrecognition.user_recognizer_server import UserRecognizerServer
+from server.users_storage_controller import UsersStorageController
 from user import User
 
 
@@ -22,9 +22,29 @@ class SeatComfortServer:
         self._host = '169.254.232.238'
         self._port = 8000
 
-        self.user_recognizer_server = UserRecognizerServer()
-        self.mood_detector_server = MoodDetectorServer()
+        # TODO cancellare
+        #self.user_recognizer_server = UserRecognizerServer()
+        #self.mood_detector_server = MoodDetectorServer()
         self.eyes_detection = EyesDetection()
+
+    def detect_user(self, img):  # Returns the name of the user if it is registered, None otherwise
+        lst = os.listdir(self._user_faces_dir)
+        if len(lst) > 0:  # If there is at least one user registered
+            recognition = DeepFace.find(img, db_path=self._user_faces_dir, enforce_detection=False)
+            if recognition[0].empty:  # User not recognized
+                return None
+            else:  # User recognized
+                file_name = os.path.basename(recognition[0]["identity"][0])
+                name, extension = os.path.splitext(file_name)
+                user_name = name.split("/")[-1]
+                return user_name
+        else:
+            return None
+
+    def get_mood(self, img):  # It returns 1 if the detected emotion was "bad", 0 otherwise
+        detection = DeepFace.analyze(img, actions=["emotion"], enforce_detection=False)
+        emotion = detection[0]['dominant_emotion']
+        return emotion
 
     def run(self):
         # create the socket
@@ -61,7 +81,7 @@ class SeatComfortServer:
                         elif data['type'] == 'user-recognition':
                             # recv the frame from the client
                             frame = np.frombuffer(data['frame'], dtype=np.uint8).reshape((540, 432, 3))
-                            name = self.user_recognizer_server.detect_user(frame)
+                            name = self.detect_user(frame)
                             # reply with the name of the detetcted user
                             if name is None:
                                 reply_msg = {'payload': None}
@@ -78,7 +98,7 @@ class SeatComfortServer:
                         elif data['type'] == 'mood-detection':
                             # recv the frame from the client and classify the emotion
                             frame = np.frombuffer(data['frame'], dtype=np.uint8).reshape((540, 432, 3))
-                            emotion = self.mood_detector_server.get_mood(frame)
+                            emotion = self.get_mood(frame)
                             # reply with the detetcted emotion
                             reply_msg = {'payload': emotion}
                             socket_communication.send(reply_msg, "M")
