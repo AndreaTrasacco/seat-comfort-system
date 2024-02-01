@@ -15,7 +15,7 @@ class LogView:
 
     def add_message(self, message):
         """
-        Method used to add a new message in the log text field
+        Method used to add a new message in the data text field
         """
         self.log_text.configure(state='normal')
         self.log_text.insert(tk.END, message + "\n")

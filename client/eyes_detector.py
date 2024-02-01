@@ -4,7 +4,7 @@ from threading import Thread
 
 import globals as glob
 import socket_communication
-from client.mooddetection.mood_detector import MoodDetector
+from client.mood_detector import MoodDetector
 
 
 class EyesDetector(Thread):
@@ -53,7 +53,7 @@ class EyesDetector(Thread):
                         glob.logged_user.set_mode(True)
                         position = glob.logged_user.get_position()
                     glob.controller.rotate_back_seat(position, True)
-                    # 4.2) print on the log the message
+                    # 4.2) print on the data the message
                     glob.controller.add_log_message(f"NEED DETECTOR - - SLEEP position set")
                 # 5) if for num_consecutive_frame you have detected open eyes
                 else:
@@ -62,7 +62,7 @@ class EyesDetector(Thread):
                         glob.logged_user.set_mode(False)
                         position = glob.logged_user.get_position()
                     glob.controller.rotate_back_seat(position, True)
-                    # 5.2) print on the log the message
+                    # 5.2) print on the data the message
                     glob.controller.add_log_message(f"NEED DETECTOR - - AWAKE position set")
 
                 # 6) start the mood detector thread, that checks if the user doesn't like

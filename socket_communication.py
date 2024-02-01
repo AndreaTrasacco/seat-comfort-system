@@ -5,14 +5,18 @@ sock = None
 
 executor = None
 start_time = 0
-#TODO TOGLIERE PHASE
+
+
+# In the following functions the 'phase' argument is used for testing purposes (logging timestamps) and
+# can assume U (User Recognition), N (Need Detection), M (Mood Detection)
+
 def send(data, phase=""):
     global start_time
     if executor == "client":
         start_time = time.time()
     else:
-        with open("log.csv", "a") as f:
-            f.write(str(time.time() - start_time).replace('.',',') + ' ' + phase + "\n")
+        with open("data/log.csv", "a") as f:
+            f.write(str(time.time() - start_time).replace('.', ',') + ' ' + phase + "\n")
     # send the length in bytes of the message
     data = str(data).encode(encoding='utf-8')
     size_data = (len(data)).to_bytes(4, byteorder='little')
@@ -36,8 +40,8 @@ def recv(phase=""):
             raise BrokenPipeError  # Connection closed
         msg_data += data
     if executor == "client":
-        with open("log.csv", "a") as f:
-            f.write(str(time.time() - start_time).replace('.',',') + ' ' + phase + "\n")
+        with open("data/log.csv", "a") as f:
+            f.write(str(time.time() - start_time).replace('.', ',') + ' ' + phase + "\n")
     else:
         start_time = time.time()
     return ast.literal_eval(msg_data.decode('utf-8'))
