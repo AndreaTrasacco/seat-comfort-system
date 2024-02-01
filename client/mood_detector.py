@@ -37,7 +37,7 @@ class MoodDetector(Thread):
             emotion, class_emotion = self.get_mood(actual_frame_cp)
             with open("mood_detector.csv", "a") as f:
                 f.write(str(time.time() - start_time) + "\n")
-            # 4) print in the log the emotion detected
+            # 4) print in the data the emotion detected
             glob.controller.add_log_message(f"MOOD DETECTOR - - {emotion} detected")
             # 5) if the detected emotion is a bad emotion
             if class_emotion == 1:
@@ -53,6 +53,6 @@ class MoodDetector(Thread):
                         position = glob.logged_user.get_position()
                         mode = "SLEEP"
                 glob.controller.rotate_back_seat(position, True)
-                # 5.2) print in the log that the position is changed
+                # 5.2) print in the data that the position is changed
                 glob.controller.add_log_message(f"MOOD DETECTOR - - Previous position restored (" + mode + ")")
                 return

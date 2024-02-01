@@ -7,14 +7,15 @@ import tkinter as tk
 
 import globals as glob
 import socket_communication
-from client.eyesdetection.eyes_detector import EyesDetector
+from client.eyes_detector import EyesDetector
 from client.gui.camera_view import CameraView
 from client.gui.rigth_side_view import RightSideView
 from client.gui.textfield_view import TextFieldView
 from client.image_picker import ImagePicker
-from client.userrecognition.user_recognizer import UserRecognizer
+from client.user_recognizer import UserRecognizer
 
-socket_communication.executor = "client"  #TODO TOGLIERE
+socket_communication.executor = "client"  # For testing (For computation of round trip time)
+
 class SeatComfortController:
     AWAKE_POSITION_DEFAULT = 0  # Position of the back seat when the user is awake
     SLEEPING_POSITION_DEFAULT = 60  # Degrees w.r.t "awake position" of the back seat when the user is sleeping
@@ -101,7 +102,7 @@ class SeatComfortController:
             self.right_side_view.get_seat_view().rotate(degrees, absolute)
 
     def add_log_message(self, message):
-        with glob.log_lock:  # get the lock for writing in the log text area
+        with glob.log_lock:  # get the lock for writing in the data text area
             self.right_side_view.get_log_view().add_message(message)
 
     def change_button_status(self, button, status):
@@ -117,4 +118,3 @@ class SeatComfortController:
 
 if __name__ == '__main__':
     glob.controller.main()
-    # TODO EVENTUALE TRY EXCEPT

@@ -2,7 +2,7 @@ import os
 
 from deepface import DeepFace
 
-
+# TODO cancellare classe
 class UserRecognizerServer:
     def __init__(self):
         self._user_faces_dir = "data/user_faces_db"
