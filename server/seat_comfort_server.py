@@ -22,9 +22,6 @@ class SeatComfortServer:
         self._host = '169.254.232.238'
         self._port = 8000
 
-        # TODO cancellare
-        #self.user_recognizer_server = UserRecognizerServer()
-        #self.mood_detector_server = MoodDetectorServer()
         self.eyes_detection = EyesDetection()
 
     def detect_user(self, img):  # Returns the name of the user if it is registered, None otherwise
