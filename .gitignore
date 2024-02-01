@@ -8,3 +8,12 @@ client/mooddetection/__pycache__/mood_detector.cpython-39.pyc
 client/eyesdetection/__pycache__/eyes_detector.cpython-39.pyc
 client/__pycache__/image_picker.cpython-39.pyc
 __pycache__/socket_communication.cpython-39.pyc
+client/eyes_log.csv
+client/user_recognizer.csv
+client/data/log.csv
+client/data/log.csv
+__pycache__/globals.cpython-39.pyc
+client/__pycache__/eyes_detector.cpython-39.pyc
+__pycache__/globals.cpython-39.pyc
+client/__pycache__/mood_detector.cpython-39.pyc
+__pycache__/globals.cpython-39.pyc
