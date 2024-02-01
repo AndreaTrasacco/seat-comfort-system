@@ -55,8 +55,9 @@ class SeatComfortController:
         if self._camera_thread.is_alive():
             self._camera_thread.join()
         if glob.logged_user is not None:
-            socket_communication.send({"type": "save", "user": pickle.dumps(glob.logged_user)})
-            reply = socket_communication.recv()
+            with self.socket_lock:
+                socket_communication.send({"type": "save", "user": pickle.dumps(glob.logged_user)})
+                reply = socket_communication.recv()
             if reply["payload"] == 0:
                 print("PROFILE SAVED ON THE SERVER")
             socket_communication.sock.close()
@@ -80,8 +81,9 @@ class SeatComfortController:
         with glob.shared_frame_lock:
             img = copy.deepcopy(glob.actual_frame)
         if name != '':
-            socket_communication.send({"type": "sign-up", "name": name, "picture": img.tobytes()})
-            socket_communication.recv()  # Wait for the reply of the server (to wait for the completion of signup)
+            with self.socket_lock:
+                socket_communication.send({"type": "sign-up", "name": name, "picture": img.tobytes()})
+                socket_communication.recv()  # Wait for the reply of the server (to wait for the completion of signup)
             self.change_button_status("signup", False)
 
     def left_arrow_handler(self, event):
